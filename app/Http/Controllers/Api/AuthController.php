@@ -70,6 +70,7 @@ class AuthController extends Controller
          $blockSize = 256;
          $aes = new Prosesaes($inputText, $inputKey, $blockSize);
          $enc = $aes->encrypt();
+        
 
         
         return response()->json([
@@ -81,9 +82,10 @@ class AuthController extends Controller
                 "nama" => $user->nama,
                 "telepon" => $user->telepon,
                 "email" => $user->email,
-                "jabatan" => $user->jabatan               
+                "jabatan" => $user->jabatan,
+                'token' => $jwt_token
+                              
              ],
-            'token' => $jwt_token
         ]);
     }
  

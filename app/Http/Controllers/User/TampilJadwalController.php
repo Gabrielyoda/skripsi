@@ -38,7 +38,7 @@ class TampilJadwalController extends Controller
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
                     ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
                     ->join('lab', 'jadwal.id_lab','=','lab.id_lab')
-                    ->select('jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.nip_dosen','dosen.nama_dosen','lab.nama_lab')
+                    ->select('jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.username_dosen','dosen.nama_dosen','lab.nama_lab')
                     ->where('jadwal.tahunajaran','=',$tahun->tahunajaran)
                     ->where('jadwal.semester','=',$semester->semester)
                     ->where('jadwal.hari','=', $hari_ini)

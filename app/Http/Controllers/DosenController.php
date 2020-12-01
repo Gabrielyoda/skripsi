@@ -5,22 +5,21 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Dosen;
 use App\Admin;
+use App\User;
 
 class DosenController extends Controller
 {
     function index(Request $request)
     {
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
         $dosen  = Dosen::all();
 
         return view('dosenadmin')
         ->with('dosen', $dosen)
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Dosen');
@@ -28,14 +27,12 @@ class DosenController extends Controller
 
     function tambah(Request $request)
     { 
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
-
+        $nama = $user -> nama;
+        
         return view('tambahdosen')
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Dosen');
@@ -43,36 +40,37 @@ class DosenController extends Controller
 
     function prosestambah(Request $request)
     {
-        $nip    = $request->get('nipDosen');
+        $username    = $request->get('usernameDosen');
         $nama   = $request->get('namaDosen');
+        $password   = bcrypt($request->get('passwordDosen'));
 
         $dosen    = new dosen();
         
-        if(!empty($nip))
+        if(!empty($username))
         {
-            $dosen    -> nip_dosen        = $nip;
+            $dosen    -> username_dosen       = $username;
         }
         $dosen    -> nama_dosen       = $nama;
+        $dosen    -> password_dosen       = $password;
 
         if($dosen->save())
         {
+            alert()->html('Berhasil Tambah Data', 'Berhasil Menambahkan Data Dosen', 'success')->autoClose(10000);
             return redirect('/admin/dosen');
         }
     }
 
     function ubah(Request $request, $id)
     { 
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
         $dosen  = Dosen::find($id);
 
         return view('ubahdosen')
         ->with('dosen', $dosen)
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Dosen');
@@ -80,20 +78,23 @@ class DosenController extends Controller
 
     function prosesubah(Request $request)
     {
-        $id     = $request->get('id');
-        $nip    = $request->get('nipDosen');
-        $nama   = $request->get('namaDosen');
+        $id         = $request->get('id');
+        $username   = $request->get('usernameDosen');
+        $nama       = $request->get('namaDosen');
+        $password   = bcrypt($request->get('passwordDosen'));
 
         $dosen    = Dosen::find($id);
         
-        if(!empty($nip))
+        if(!empty($username))
         {
-            $dosen    -> nip_dosen        = $nip;
+            $dosen    -> username_dosen        = $username;
         }
         $dosen    -> nama_dosen       = $nama;
+        $dosen    -> password_dosen       = $password;
 
         if($dosen->save())
         {
+            alert()->html('Berhasil Ubah Data', 'Berhasil Mengubah Data Dosen', 'success')->autoClose(10000);
             return redirect('/admin/dosen');
         }
     }
@@ -104,6 +105,7 @@ class DosenController extends Controller
 
         if($dosen -> delete())
         {
+            alert()->html('Data Berhasil Dihapus', 'Berhasil Menghapus Data Dosen', 'success')->autoClose(10000);
             return redirect('/admin/dosen');
         }
     }

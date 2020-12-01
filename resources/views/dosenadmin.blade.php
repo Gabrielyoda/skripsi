@@ -17,7 +17,7 @@
 							<thead>
 								<tr>
 									<th>No.</th>
-                                    <th>NIP Dosen</th>
+                                    <th>Username Dosen</th>
 									<th>Nama Dosen</th>
                                     <th class="text-center">Pilihan</th>
 								</tr>
@@ -29,7 +29,7 @@
                                 @foreach ($dosen as $dosens)
                                 <tr>
                                     <td>{{ $nomor }}</td>
-                                    <td>{{ $dosens -> nip_dosen }}</td>
+                                    <td>{{ $dosens -> username_dosen }}</td>
                                     <td>{{ $dosens -> nama_dosen }}</td>
                                     <td class="text-center">
                                         <div class="btn-group">

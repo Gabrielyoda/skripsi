@@ -21,7 +21,7 @@
                         <div class="form-group">
                             <label class="text-muted">Dosen Pengajar :</label>
                             <select class="form-control" name="namaDosen" id="namaDosen" required>
-                                <option value="{{ $kp -> id_dosen }}">{{ $kp -> nip_dosen }} - {{ $kp -> nama_dosen }}</option>
+                                <option value="{{ $kp -> id_dosen }}">{{ $kp -> nama_dosen }}</option>
                             </select>
                         </div>
                         <div class="form-group">

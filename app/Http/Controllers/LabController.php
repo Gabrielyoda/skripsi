@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Lab;
 use App\Admin;
+use App\User;
 
 use Illuminate\Http\Request;
 
@@ -10,17 +11,15 @@ class LabController extends Controller
 {
     function index(Request $request)
     {
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
         $lab  = Lab::all();
 
         return view('labadmin')
         ->with('lab', $lab)
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Data Lab');
@@ -28,14 +27,12 @@ class LabController extends Controller
 
     function tambah(Request $request)
     { 
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
         return view('tambahlab')
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Data Lab');
@@ -53,23 +50,22 @@ class LabController extends Controller
 
         if($lab->save())
         {
+            alert()->html('Berhasil Tambah Data', 'Berhasil Menambahkan Data Lab', 'success')->autoClose(10000);
             return redirect('/admin/lab');
         }
     }
 
     function ubah(Request $request, $id)
     { 
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
         $lab  = Lab::find($id);
 
         return view('ubahlab')
         ->with('lab', $lab)
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Data Lab');
@@ -88,6 +84,7 @@ class LabController extends Controller
 
         if($lab->save())
         {
+            alert()->html('Berhasil Ubah Data', 'Berhasil Mengubah Data Lab', 'success')->autoClose(10000);
             return redirect('/admin/lab');
         }
     }
@@ -98,6 +95,7 @@ class LabController extends Controller
 
         if($lab -> delete())
         {
+            alert()->html('Berhasil Hapus Data', 'Berhasil Menghapus Data Jadwal', 'success')->autoClose(10000);
             return redirect('/admin/lab');
         }
     }

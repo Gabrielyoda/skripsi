@@ -31,10 +31,10 @@
                     <li class="nav-item"><a class="nav-link {{ ($title=='Data Matakuliah') ? 'active':'' }}" href="{{ Route('mtk') }}"><h6><i class="fa fa-home fa-lg"></i> Matakuliah</h6></a></li>
                     <li class="nav-item"><a class="nav-link {{ ($title=='Dosen') ? 'active':'' }}" href="{{ Route('dosen') }}"><h6><i class="fa fa-users fa-lg"></i> Dosen</h6></a></li>
                     <li class="nav-item"><a class="nav-link {{ ($title=='Data Lab') ? 'active':'' }}" href="{{ Route('lab') }}"><h6><i class="fa fa-home fa-lg"></i> Ruang Lab.kom</h6></a></li>
-                    <li class="nav-item"><a class="nav-link {{ ($title=='Software') ? 'active':'' }}" href="{{ Route('software') }}"><h6><i class="fa fa-flag fa-lg"></i> Software</h6></a></li>
+                    <!-- <li class="nav-item"><a class="nav-link {{ ($title=='Software') ? 'active':'' }}" href="{{ Route('software') }}"><h6><i class="fa fa-flag fa-lg"></i> Software</h6></a></li> -->
                 </div>
                 <div class="label-sidebar">
-                    <li class="nav-item"><a class="nav-link {{ ($title=='Spesifikasi Lab') ? 'active':'' }}" href="{{ Route('spek') }}"><h6><i class="fa fa-gear fa-lg"></i> Spesifikasi Lab</h6></a></li>
+                    <!-- <li class="nav-item"><a class="nav-link {{ ($title=='Spesifikasi Lab') ? 'active':'' }}" href="{{ Route('spek') }}"><h6><i class="fa fa-gear fa-lg"></i> Spesifikasi Lab</h6></a></li> -->
                     <li class="nav-item"><a class="nav-link {{ ($title=='Jadwal') ? 'active':'' }}" href="{{ Route('jadwal') }}"><h6><i class="fa fa-calendar-o fa-lg"></i> Jadwal</h6></a></li>
                     <li class="nav-item"><a class="nav-link {{ ($title=='Kelas Pengganti') ? 'active':'' }}" href="{{ Route('kelaspengganti') }}"><h6><i class="fa fa-calendar fa-lg"></i> Kuliah Pengganti</h6></a></li>
                 </div>
@@ -44,7 +44,7 @@
 		<main class="col-xs-12 col-sm-8 col-lg-9 col-xl-10 pt-3 pl-4 ml-auto">
             <header class="page-header row justify-center">
                 <div class="col-md-6 col-lg-8" >
-                    <h5 class="float-left text-center text-muted">Test - {{ $semester }} {{ $tahunajaran }} <a href="{{ Route('ubahwaktu') }}" class="btn btn-primary">Ubah</a></h5>
+                    <h5 class="float-left text-center text-muted">Sistem Penjadwalan - {{ $semester }} {{ $tahunajaran }} <a href="{{ Route('ubahwaktu') }}" class="btn btn-primary">Ubah</a></h5>
                 </div>
                 <div class="dropdown user-dropdown col-md-6 col-lg-4 text-center text-md-right"><a class="btn btn-stripped dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img src="{{ asset('img/admin-user.png') }}" alt="Foto Profil" class="profile-photo" width="50" height="auto">
@@ -183,7 +183,7 @@
                             $('select[name="namaDosen"]').append('<option value="" disabled selected>-- Pilih Dosen Pengajar --</option>');
                             for(i = 0 ; i < panjangarray ; i++)
                             {
-                                $('select[name="namaDosen"]').append('<option value="'+data['dosen'][i].id_dosen+'">'+data['dosen'][i].nip_dosen+' - '+data['dosen'][i].nama_dosen+'</option>');
+                                $('select[name="namaDosen"]').append('<option value="'+data['dosen'][i].id_dosen+'">'+data['dosen'][i].nama_dosen+'</option>');
                             }
                         }
                         else{

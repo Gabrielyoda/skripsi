@@ -11,12 +11,16 @@
                         {{ csrf_field() }}
                         <input type="hidden" name="id" value="{{ $dosen -> id_dosen }}" hidden>
                         <div class="form-group">
-                            <label class="text-muted">NIP Dosen :</label>
-                            <input type="text" name="nipDosen" class="form-control" value="{{ $dosen -> nip_dosen }}">
+                            <label class="text-muted">Username Dosen :</label>
+                            <input type="text" name="usernameDosen" class="form-control" value="{{ $dosen -> username_dosen }}" required>
                         </div>
                         <div class="form-group">
                             <label class="text-muted">Nama Dosen :</label>
                             <input type="text" name="namaDosen" class="form-control" value="{{ $dosen -> nama_dosen }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-muted">Password Dosen :</label>
+                            <input type="password" name="passwordDosen" class="form-control" required>
                         </div>
                         <div class="text-center">
                             <div class="btn-group">

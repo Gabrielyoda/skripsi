@@ -34,7 +34,7 @@
                                 <tr>
                                     <td>{{ $nomor }}</td>
                                     <td>{{ $joins -> kd_mtk }} - {{ $joins -> nama_mtk }}</td>
-                                    <td>{{ $joins -> nip_dosen }} - {{ $joins -> nama_dosen }}</td>
+                                    <td> {{ $joins -> nama_dosen }}</td>
                                     <td>{{ $joins -> kelompok }}</td>
                                     <td>{{ $joins -> nama_lab }}</td>
                                     <td>{{ $joins -> tanggal_pengganti }}</td>
