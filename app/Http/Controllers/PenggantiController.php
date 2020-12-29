@@ -18,6 +18,7 @@ use App\KuliahPengganti;
 use Alert;
 
 
+
 class PenggantiController extends Controller
 {
     function index(Request $request)
@@ -30,8 +31,8 @@ class PenggantiController extends Controller
                     ->join('kuliahpengganti', 'kuliahpengganti.id_jadwal','=','jadwal.id_jadwal')
                     ->join('lab', 'kuliahpengganti.id_lab','=','lab.id_lab')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
-                    ->select('kuliahpengganti.id_kp','jadwal.kelompok','kuliahpengganti.tanggal_pengganti','kuliahpengganti.jam_pengganti','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.username_dosen','dosen.nama_dosen','lab.nama_lab','lab.kapasitas_lab')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
+                    ->select('kuliahpengganti.id_kp','jadwal.kelompok','kuliahpengganti.tanggal_pengganti','kuliahpengganti.jam_pengganti','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','users.id_user','users.nama','lab.nama_lab','lab.kapasitas_lab')
                     ->where('jadwal.tahunajaran','=',$request->session()->get('tahunajaran'))
                     ->where('jadwal.semester','=',$request->session()->get('semester'))
                     ->get();
@@ -77,6 +78,8 @@ class PenggantiController extends Controller
         $lab        = $request->get('namaLab');
         $tanggalkp  = $request->get('tanggalKP');
         $jamAjar    = $request->get('jamAjar');
+
+       // dd($jamAjar);
 
         $tanggal    = $this->caritanggal($tanggalkp);
         $hari       = $this->carihari($tanggal);
@@ -126,7 +129,7 @@ class PenggantiController extends Controller
         {
             $jadwal = Jadwal::select('id_jadwal')
                             ->where('kelompok','=', $kelompok)
-                            ->where('id_dosen', $dosen)
+                            ->where('id_user', $dosen)
                             ->where('id_mtk', $mtk)
                             ->where('semester', $request->session()->get('semester'))
                             ->where('tahunajaran', $request->session()->get('tahunajaran'))
@@ -165,8 +168,8 @@ class PenggantiController extends Controller
                     ->join('kuliahpengganti', 'kuliahpengganti.id_jadwal','=','jadwal.id_jadwal')
                     ->join('lab', 'kuliahpengganti.id_lab','=','lab.id_lab')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
-                    ->select('kuliahpengganti.id_kp','jadwal.kelompok','kuliahpengganti.tanggal_pengganti','kuliahpengganti.jam_pengganti','matakuliah.id_mtk','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.id_dosen','dosen.username_dosen','dosen.nama_dosen','lab.id_lab','lab.nama_lab','lab.kapasitas_lab')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
+                    ->select('kuliahpengganti.id_kp','jadwal.kelompok','kuliahpengganti.tanggal_pengganti','kuliahpengganti.jam_pengganti','matakuliah.id_mtk','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','users.id_user','users.id_user','users.nama','lab.id_lab','lab.nama_lab','lab.kapasitas_lab')
                     ->where('kuliahpengganti.id_kp','=',$id)
                     ->first();
 
@@ -287,7 +290,7 @@ class PenggantiController extends Controller
         {
             $jadwal = Jadwal::select('id_jadwal')
                             ->where('kelompok','=', $kelompok)
-                            ->where('id_dosen', $dosen)
+                            ->where('id_user', $dosen)
                             ->where('id_mtk', $mtk)
                             ->where('semester', $request->session()->get('semester'))
                             ->where('tahunajaran', $request->session()->get('tahunajaran'))

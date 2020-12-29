@@ -4,19 +4,161 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="48dp"
     tools:context=".fragment.home.HomeFragment">
 
-    <TextView
-        android:id="@+id/text_home"
-        android:layout_width="match_parent"
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_gravity="center"
+        android:layout_marginTop="250dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
+
+    <ScrollView
+        android:id="@+id/scrollView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:scrollbars="none"
+        android:layout_marginBottom="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="match_parent"
+                android:layout_height="165dp"
+                android:background="@drawable/bg_gradient_blue"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:text="Aplikasi Peminjaman Lab"
+                android:textColor="#FFF"
+                android:textSize="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="80dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/bg_layout_white"
+                android:orientation="vertical"
+                android:paddingTop="30dp"
+                android:paddingBottom="30dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/view2">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Jadwal Sekarang"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="#EDEDED" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerJadwal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:background="@drawable/bg_layout_white"
+                android:orientation="vertical"
+                android:paddingTop="30dp"
+                android:paddingBottom="30dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+                tools:layout_editor_absoluteX="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Kuliah Pengganti"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="#EDEDED" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerPengganti"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

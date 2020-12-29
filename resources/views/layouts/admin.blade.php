@@ -37,6 +37,7 @@
                     <!-- <li class="nav-item"><a class="nav-link {{ ($title=='Spesifikasi Lab') ? 'active':'' }}" href="{{ Route('spek') }}"><h6><i class="fa fa-gear fa-lg"></i> Spesifikasi Lab</h6></a></li> -->
                     <li class="nav-item"><a class="nav-link {{ ($title=='Jadwal') ? 'active':'' }}" href="{{ Route('jadwal') }}"><h6><i class="fa fa-calendar-o fa-lg"></i> Jadwal</h6></a></li>
                     <li class="nav-item"><a class="nav-link {{ ($title=='Kelas Pengganti') ? 'active':'' }}" href="{{ Route('kelaspengganti') }}"><h6><i class="fa fa-calendar fa-lg"></i> Kuliah Pengganti</h6></a></li>
+                    <li class="nav-item"><a class="nav-link {{ ($title=='Pinjam Lab') ? 'active':'' }}" href="{{ Route('pinjamlab') }}"><h6><i class="fa fa-calendar fa-lg"></i> Peminjaman Lab</h6></a></li>
                 </div>
             </ul>
 		</nav>
@@ -183,7 +184,7 @@
                             $('select[name="namaDosen"]').append('<option value="" disabled selected>-- Pilih Dosen Pengajar --</option>');
                             for(i = 0 ; i < panjangarray ; i++)
                             {
-                                $('select[name="namaDosen"]').append('<option value="'+data['dosen'][i].id_dosen+'">'+data['dosen'][i].nama_dosen+'</option>');
+                                $('select[name="namaDosen"]').append('<option value="'+data['dosen'][i].id_user+'">'+data['dosen'][i].nama+'</option>');
                             }
                         }
                         else{
@@ -201,6 +202,7 @@
         $("#namaDosenKP").change(function(){
             var idmtk       = $("#namaMatkulKP").val();
             var iddosen     = $(this).val();
+            
             
             if(idmtk && iddosen) {
                 $.ajax({
@@ -226,6 +228,22 @@
                         }
                     }
                 });
+            }
+        });
+
+        $('#jamMulai').change(function(){
+            
+            var jam    = parseInt($(this).val().substring(0, 2)) + parseInt(2);
+
+            if(jam < 10) {
+                jam = "0"+jam;
+            }
+
+            $('#jamSelesai').empty();
+
+            while(jam <= 18) {
+                $('#jamSelesai').append('<option value="'+jam+':00">'+jam+':00</option>');
+                jam++;
             }
         });
     });

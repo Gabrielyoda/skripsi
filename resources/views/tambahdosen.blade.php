@@ -10,12 +10,12 @@
                     <form action="{{ Route('prosestambahdosen') }}" method="post">
                         {{ csrf_field() }}
                         <div class="form-group">
-                            <label class="text-muted">Username Dosen :</label>
-                            <input type="text" name="usernameDosen" class="form-control">
-                        </div>
-                        <div class="form-group">
                             <label class="text-muted">Nama Dosen :</label>
                             <input type="text" name="namaDosen" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-muted">Email Dosen :</label>
+                            <input type="text" name="emailDosen" class="form-control">
                         </div>
                         <div class="form-group">
                             <label class="text-muted">Password Dosen :</label>

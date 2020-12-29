@@ -27,12 +27,32 @@
                 android:layout_width="110dp"
                 android:layout_height="110dp"
                 android:layout_marginTop="14dp"
-                android:src="@drawable/icon_nopic"
+                android:src="@drawable/admin_user"
                 app:civ_border="true"
                 app:civ_shadow="true"
                 app:civ_shadow_radius="0"
                 app:civ_border_color="@color/bluePrimary"
                 app:civ_border_width="2dp" />
+
+            <TextView
+                android:id="@+id/txt_nama"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Nama"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@color/bluePrimary"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_jabatan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Jabatan"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@color/bluePrimary"
+                android:textStyle="bold" />
 
 
 
@@ -59,19 +79,21 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nama"
+                        android:text="No-hp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/bluePrimary"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/txt_nama"
+                        android:id="@+id/txt_no_hp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text=""
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_90" />
+
+
 
                 </LinearLayout>
 
@@ -102,65 +124,6 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginTop="24dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="No-Hp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                        android:textColor="@color/bluePrimary"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/txt_no_hp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text=""
-                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                        android:textColor="@color/grey_90" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Jabatan"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                        android:textColor="@color/bluePrimary"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/txt_jabatan"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text=""
-                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                        android:textColor="@color/grey_90" />
-
-                </LinearLayout>
-
-            </LinearLayout>
 
             <Button
                 android:id="@+id/btn_sign_out"

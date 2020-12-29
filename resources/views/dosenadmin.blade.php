@@ -17,8 +17,8 @@
 							<thead>
 								<tr>
 									<th>No.</th>
-                                    <th>Username Dosen</th>
-									<th>Nama Dosen</th>
+                                    <th>Nama Dosen</th>
+									<th>Email Dosen</th>
                                     <th class="text-center">Pilihan</th>
 								</tr>
 							</thead>
@@ -29,12 +29,12 @@
                                 @foreach ($dosen as $dosens)
                                 <tr>
                                     <td>{{ $nomor }}</td>
-                                    <td>{{ $dosens -> username_dosen }}</td>
-                                    <td>{{ $dosens -> nama_dosen }}</td>
+                                    <td>{{ $dosens -> nama }}</td>
+                                    <td>{{ $dosens -> email }}</td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <a class="btn btn-warning text-white" href="{{ route('ubahdosen', $dosens->id_dosen ) }}"><i class="fa fa-edit fa-lg"></i> Ubah Data</a>
-                                            <a class="btn btn-danger text-white" href="{{ route('hapusdosen', $dosens->id_dosen ) }}"><i class="fa fa-trash fa-lg"></i> Hapus Data</a>
+                                            <a class="btn btn-warning text-white" href="{{ route('ubahdosen', $dosens->id_user ) }}"><i class="fa fa-edit fa-lg"></i> Ubah Data</a>
+                                            <a class="btn btn-danger text-white" href="{{ route('hapusdosen', $dosens->id_user ) }}"><i class="fa fa-trash fa-lg"></i> Hapus Data</a>
                                         </div>
                                     </td>
                                 </tr>

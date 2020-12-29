@@ -57,7 +57,7 @@
                                         <th rowspan="{{ $joins -> sks_mtk }}" class="align-middle">
                                             <p class="isitabel m-0"><strong>{{ $joins -> nama_mtk }}</strong></p>
                                             <p class="isitabel mx-0 my-2">{{ $joins -> kelompok }}</p>
-                                            <p class="isitabel m-0">{{ $joins -> nama_dosen }}</p>
+                                            <p class="isitabel m-0">{{ $joins -> nama }}</p>
                                             @if(!empty($joins -> tanggal_pengganti))
                                                 <p class="isitabel m-0 text-info">{{ "(".$joins -> tanggal_pengganti.")" }}</p>
                                             @endif

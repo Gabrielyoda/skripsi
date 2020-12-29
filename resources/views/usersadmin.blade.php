@@ -39,8 +39,8 @@
                                     <td>{{ $users -> jabatan }}</td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <a class="btn btn-warning text-white" href="{{ route('ubahusers', $users->nim ) }}"><i class="fa fa-edit fa-lg"></i> Ubah Data</a>
-                                            <a class="btn btn-danger text-white" href="{{ route('hapususers', $users->nim ) }}"><i class="fa fa-trash fa-lg"></i> Hapus Data</a>
+                                            <a class="btn btn-warning text-white" href="{{ route('ubahusers', $users->id_user ) }}"><i class="fa fa-edit fa-lg"></i> Ubah Data</a>
+                                            <a class="btn btn-danger text-white" href="{{ route('hapususers', $users->id_user ) }}"><i class="fa fa-trash fa-lg"></i> Hapus Data</a>
                                         </div>
                                     </td>
                                 </tr>

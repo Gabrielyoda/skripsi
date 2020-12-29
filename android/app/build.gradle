@@ -37,6 +37,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.2.2'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -47,9 +48,19 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:3.11.0"
     implementation 'com.squareup.retrofit2:converter-scalars:2.5.0'
 
+    //lifeclye and async
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha04'
+    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.2.0-alpha04'
+    implementation 'com.loopj.android:android-async-http:1.4.9'
+
     //library tampilan
     implementation 'com.github.scottyab:showhidepasswordedittext:0.8'
     implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation 'com.mikhaellopez:circularimageview:3.2.0'
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0-rc01'
+    implementation 'com.google.android.material:material:1.1.0-alpha10'
 }

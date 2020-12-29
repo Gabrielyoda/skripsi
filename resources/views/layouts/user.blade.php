@@ -1,8 +1,4 @@
-@if(Session::get('jabatan') != 'Asisten')
-    <script>
-        window.location = "http://localhost:8000/";
-    </script>
-@endif
+
 <!DOCTYPE html>
 <html>
 <head>

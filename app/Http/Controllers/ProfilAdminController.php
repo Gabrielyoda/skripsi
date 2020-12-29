@@ -11,6 +11,7 @@ class ProfilAdminController extends Controller
     function index(Request $request)
     {
         $profil = User::find($request->session()->get('nim'));
+       
 
         $nama  =  $profil -> nama;
 
@@ -41,7 +42,7 @@ class ProfilAdminController extends Controller
         if($admin->save())
         {
             alert()->html('Berhasil Update Data', 'Berhasil Memperbarui Data Profile', 'success')->autoClose(10000);
-            $request->session() -> put('nim', $nim);
+            $request->session() -> put('nim', $oldnim);
             return redirect('/admin/profil');
         }
     }

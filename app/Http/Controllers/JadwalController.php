@@ -22,9 +22,9 @@ class JadwalController extends Controller
 
         $join   = DB::table('jadwal')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
                     ->join('lab', 'jadwal.id_lab','=','lab.id_lab')
-                    ->select('jadwal.id_jadwal','jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.username_dosen','dosen.nama_dosen','lab.nama_lab','lab.kapasitas_lab')
+                    ->select('jadwal.id_jadwal','jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','users.id_user','users.nama','lab.nama_lab','lab.kapasitas_lab')
                     ->where('jadwal.tahunajaran','=',$request->session()->get('tahunajaran'))
                     ->where('jadwal.semester','=',$request->session()->get('semester'))
                     ->get();
@@ -44,7 +44,7 @@ class JadwalController extends Controller
         $nama = $user -> nama;
 
         $matkul = Matakuliah::select('*')->orderBy('nama_mtk')->get();
-        $dosen  = Dosen::select('*')->orderBy('nama_dosen')->get();
+        $dosen  = User::select('*')->orderBy('nama')->where('jabatan','=', 'Dosen')->get();
         $lab    = Lab::select('*')->orderBy('nama_lab')->get();
 
         return view('tambahjadwal')
@@ -95,7 +95,7 @@ class JadwalController extends Controller
             $jadwal    -> semester      = $request->session()->get('semester');
             $jadwal    -> tahunajaran   = $request->session()->get('tahunajaran');
             $jadwal    -> kelompok      = $kelompok;
-            $jadwal    -> id_dosen      = $dosen;
+            $jadwal    -> id_user      = $dosen;
             $jadwal    -> id_mtk        = $mtk;
             $jadwal    -> id_lab        = $lab;
             $jadwal    -> hari          = $hari;
@@ -122,7 +122,7 @@ class JadwalController extends Controller
         $jadwal  = Jadwal::find($id);
 
         $matkul = Matakuliah::select('*')->orderBy('nama_mtk')->get();
-        $dosen  = Dosen::select('*')->orderBy('nama_dosen')->get();
+        $dosen  = User::select('*')->orderBy('nama')->where('jabatan','=', 'Dosen')->get();
         $lab    = Lab::select('*')->orderBy('nama_lab')->get();
 
         $jumlahSks = Matakuliah::select("sks_mtk")->where('id_mtk','=',$jadwal->id_mtk)->first();
@@ -179,7 +179,7 @@ class JadwalController extends Controller
         $jadwal    = Jadwal::find($id);
         
         $jadwal    -> kelompok      = $kelompok;
-        $jadwal    -> id_dosen      = $dosen;
+        $jadwal    -> id_user      = $dosen;
         $jadwal    -> id_mtk        = $mtk;
         $jadwal    -> id_lab        = $lab;
         $jadwal    -> hari          = $hari;

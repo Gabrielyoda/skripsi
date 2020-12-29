@@ -227,9 +227,35 @@
         $('#inputfieldtanggal').change(function(){
             
             var waktu       = $(this).val();
-            
+
+            //ini untuk misahin waktu
+            var hari = waktu.substring(0, 2);
+            var bulan = waktu.substring(3, waktu.length - 5, waktu.length);
+            var tahun = waktu.substring(waktu.length - 4, waktu.length);
+
+            var months = [
+                'Januari',
+                'Februari',
+                'Maret',
+                'April',
+                'Mei',
+                'Juni',
+                'Juli',
+                'Agustus',
+                'September',
+                'Oktober',
+                'November',
+                'Desember'
+            ];
+            bulan = months.indexOf(bulan) + 1;
+
+            var tanggal = tahun +'-'+ bulan +'-'+ hari;
             var namahari    = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-            var carihari    = new Date(waktu).getDay();
+
+            var carihari    = new Date(waktu).getDay(); 
+            if(isNaN(carihari)){
+                carihari    = new Date(tanggal).getDay(); 
+            }
 
             var hari        = namahari[carihari];
 

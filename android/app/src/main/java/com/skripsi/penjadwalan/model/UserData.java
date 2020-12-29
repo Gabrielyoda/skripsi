@@ -1,16 +1,10 @@
 package com.skripsi.penjadwalan.model;
 
 public class UserData {
-    private String nim,nama,telepon,email,jabatan,token;
+    private String nama,telepon,email,jabatan,token;
 
 
-    public String getNim() {
-        return nim;
-    }
 
-    public void setNim(String nim) {
-        this.nim = nim;
-    }
 
     public String getNama() {
         return nama;
