@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.Tambah_KuliahPengganti">
+    tools:context=".activity.Tambah_KuliahPenggantiAsisten">
 
     <ScrollView
         android:id="@+id/scrollView3"
@@ -146,8 +146,10 @@
 
                 </LinearLayout>
 
-                <!--Spinner lab-->
+                <!-- Jam Ajar-->
                 <LinearLayout
+
+                    android:layout_marginTop="40dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="24dp"
@@ -156,22 +158,24 @@
                     android:paddingBottom="24dp">
 
                     <TextView
-                        android:layout_marginTop="40dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:text="Nama Lab :"
+                        android:text="Jam Ajar :"
                         android:textColor="@color/grey_90"
                         android:textSize="20sp"
 
                         />
 
                     <Spinner
-                        android:id="@+id/spn_lab"
+                        android:id="@+id/spn_jamAjar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:spinnerMode="dropdown"
                         />
+
+
+
 
                 </LinearLayout>
 
@@ -223,9 +227,8 @@
 
                 </LinearLayout>
 
+                <!--Spinner lab-->
                 <LinearLayout
-
-                    android:layout_marginTop="40dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="24dp"
@@ -234,24 +237,22 @@
                     android:paddingBottom="24dp">
 
                     <TextView
+                        android:layout_marginTop="40dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:text="Jam Ajar :"
+                        android:text="Nama Lab :"
                         android:textColor="@color/grey_90"
                         android:textSize="20sp"
 
                         />
 
                     <Spinner
-                        android:id="@+id/spn_jamAjar"
+                        android:id="@+id/spn_lab"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:spinnerMode="dropdown"
                         />
-
-
-
 
                 </LinearLayout>
 

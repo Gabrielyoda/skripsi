@@ -7,6 +7,9 @@ use Validator;
 use Hash;
 use App\Admin;
 use App\User;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\Cache;
 
 class LoginController extends Controller
 {
@@ -18,25 +21,35 @@ class LoginController extends Controller
     function proseslogin(Request $request)
     {
         $this->validate($request, [
-            'nim'       => 'required',
+            'email'       => 'required',
             'password'  => 'required'
         ],[
-            'nim.required'      => 'Kolom NIM harus diisi!',
+            'email.required'      => 'Kolom email harus diisi!',
             'password.required' => 'Kolom Kata Sandi harus diisi!',
         ]);
 
-        $nim        = $request->get('nim');
+        $email        = $request->get('email');
         $password   = $request->get('password');
+        $credentials = $request->only('email', 'password');
+
+        $jwt_token = null;
+ 
+        // if (!$jwt_token = JWTAuth::attempt($credentials)) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Invalid email or Password',
+        //     ], 401);
+        // }
         
-        $ceknim = User::where('nim','=',$nim)->first();
-        if($ceknim)
+        $cekemail = User::where('email','=',$email)->first();
+        if($cekemail)
         {
-            $getpassword = User::select("password")->where('nim','=',$nim)->first();
+            $getpassword = User::select("password")->where('email','=',$email)->first();
 
             if(Hash::check($password,$getpassword->password))
             {
 
-                $getdata = User::select('nama','id_user')->where('nim','=',$nim)->first();
+                $getdata = User::select('nama','id_user')->where('email','=',$email)->first();
                 $id_user=$getdata['id_user'];
                 $request->session() -> put('nim', $id_user);
 
@@ -44,18 +57,28 @@ class LoginController extends Controller
                 $jabatan = $record_user['jabatan'];
                 $request->session() -> put('jabatan', $jabatan);
 
+               
+
                 if($jabatan == 'SPV') {
+                    alert()->html('Login Berhasil', 'Berhasil Melakukan login ', 'success')->autoClose(10000);
                     return redirect('/admin/pilih');    
 
                 }
                 else {
                     // Jabatan != SPV
+                    //alert()->html('Login Berhasil', 'Berhasil Melakukan login ', 'success')->autoClose(10000);
+                    
+                    $credentials = $request->only('email', 'password');
+                    $request->session() -> put('token', $jwt_token);
+                    Cache::forever('toke', $jwt_token);
+                    Cache::forever('id_user', $id_user);
+                    Cache::forever('jabatan', $jabatan);
                     return redirect('/homeuser');
                 }
             }
             else
             {      
-                return back()->with('error', 'NIM atau Kata Sandi salah');
+                return back()->with('error', 'Email atau Kata Sandi salah');
             }
         }
         else

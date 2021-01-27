@@ -42,7 +42,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import static android.R.layout.simple_spinner_item;
 
-public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
+public class Tambah_KuliahPenggantiDosen extends AppCompatActivity {
     private ArrayList<Lab> labs;
     private ArrayList<Matakuliah> matakuliahs;
     private ArrayList<Matakuliah> dosen;
@@ -61,25 +61,25 @@ public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
 
     private ImageView tgl_pinjam;
     private String[] Item = {"07:10 - 08:50","08:00 - 09:40","08:55 - 10:35","09:45 - 11:30",
-                            "10:40 - 12:25","11:35 - 13:20","12:30 - 14:15","13:25 - 15:10","14:20 - 16:05","15:15 - 17:00",
-                            "16:10 - 17:55","17:05 - 18:50"};
+        "10:40 - 12:25","11:35 - 13:20","12:30 - 14:15","13:25 - 15:10","14:20 - 16:05","15:15 - 17:00",
+        "16:10 - 17:55","17:05 - 18:50"};
 
     private String[] Item2 = {"07:10 - 09:40", "08:00 - 10:35", "08:55 - 11:30", "09:45 - 12:25", "10:40 - 13:20",
-                            "11:35 - 14:15", "12:30 - 15:10", "13:25 - 16:05", "14:20 - 17:00", "15:15 - 17:55", "16:10 - 18:50"};
+        "11:35 - 14:15", "12:30 - 15:10", "13:25 - 16:05", "14:20 - 17:00", "15:15 - 17:55", "16:10 - 18:50"};
 
     Calendar myCalendar;
     String bulan_ar[] = {"Januari", "Februari", "Maret","April", "Mei", "Juni","Juli","Agustus", "Oktober","September", "November","Desember"};
     TextView txt_tgl;
     Button tambah;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tambah__kuliah_pengganti);
+        setContentView(R.layout.activity_tambah__kuliah_pengganti_dosen);
 
         spinner_lab = findViewById(R.id.spn_lab);
         spinner_mtk = findViewById(R.id.spn_mtk);
-        spinner_dosen = findViewById(R.id.spn_dosen);
         spinner_kelompok = findViewById(R.id.spn_kelompok);
         spinner_jam = findViewById(R.id.spn_jamAjar);
         spinner_kelompok = findViewById(R.id.spn_kelompok);
@@ -91,6 +91,8 @@ public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
 
         dataLab();
         dataMtk();
+        User user = PrefUtil.getUser(this, PrefUtil.USER_SESSION);
+        id_dosen = String.valueOf(user.getData().getId_user());
 
 
         SimpleDateFormat hari = new SimpleDateFormat("EEEE");
@@ -121,24 +123,8 @@ public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
                 //id_spinner = parent.getItemAtPosition(position).toString();
                 id_mtk = MtkId.get(position);
                 sks = MtkSks.get(position);
-                DosenId.clear();
-                DosenNama.clear();
-                spinJam(sks);
-                dataDosen(id_mtk);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        spinner_dosen.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //id_spinner = parent.getItemAtPosition(position).toString();
-                id_dosen = DosenId.get(position);
                 KelompokNama.clear();
+                spinJam(sks);
                 dataKelompok(id_mtk, id_dosen);
             }
 
@@ -147,6 +133,8 @@ public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
 
             }
         });
+
+
 
         spinner_kelompok.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -178,7 +166,7 @@ public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
         tgl_pinjam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(Tambah_KuliahPenggantiAsisten.this, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(Tambah_KuliahPenggantiDosen.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         view.setMinDate(System.currentTimeMillis() - 1000);
@@ -273,7 +261,7 @@ public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
 
         Api api = retrofit.create(Api.class);
 
-        Call<String> call = api.getMatakuliah();
+        Call<String> call = api.getMatakuliahDosen(id_dosen);
 
         call.enqueue(new Callback<String>() {
             @Override
@@ -300,41 +288,7 @@ public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
         });
     }
 
-    private void dataDosen(String id_mtk){
 
-        Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(Config.BASE_URL)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build();
-
-        Api api = retrofit.create(Api.class);
-
-        Call<String> call = api.getDosen(id_mtk);
-
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.i("Responsestring", response.body().toString());
-                //Toast.makeText()
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        Log.i("onSuccess", response.body().toString());
-
-                        String jsonresponse = response.body().toString();
-                        spinDosen(jsonresponse);
-
-                    } else {
-                        Log.i("onEmptyResponse", "Returned empty response");//Toast.makeText(getContext(),"Nothing returned",Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-
-            }
-        });
-    }
 
     private void dataKelompok(String id_mtk,String id_dosen){
 
@@ -401,7 +355,7 @@ public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
                     MtkSks.add(matakuliahs.get(i).getSks_mtk().toString());
                 }
 
-                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(Tambah_KuliahPenggantiAsisten.this, simple_spinner_item, MtkNama);
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(Tambah_KuliahPenggantiDosen.this, simple_spinner_item, MtkNama);
                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
                 spinner_mtk.setAdapter(spinnerArrayAdapter);
 
@@ -413,44 +367,7 @@ public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
 
     }
 
-    private void spinDosen(String response){
 
-        try {
-
-            JSONObject obj = new JSONObject(response);
-            if(obj.optString("error").equals("false")){
-
-                dosen = new ArrayList<>();
-                JSONArray dataArray  = obj.getJSONArray("data");
-
-                for (int i = 0; i < dataArray.length(); i++) {
-
-                    Matakuliah spinnerModel = new Matakuliah();
-                    JSONObject dataobj = dataArray.getJSONObject(i);
-
-
-                    spinnerModel.setId_dosen(dataobj.getString("id_user"));
-                    spinnerModel.setNama_dosen(dataobj.getString("nama"));
-                    dosen.add(spinnerModel);
-
-                }
-
-                for (int i = 0; i < dosen.size(); i++){
-                    DosenId.add(dosen.get(i).getId_dosen());
-                    DosenNama.add(dosen.get(i).getNama_dosen().toString());
-                }
-
-                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(Tambah_KuliahPenggantiAsisten.this, simple_spinner_item, DosenNama);
-                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-                spinner_dosen.setAdapter(spinnerArrayAdapter);
-
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private void spinKelompok(String response){
 
@@ -477,7 +394,7 @@ public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
                     KelompokNama.add(kelompok.get(i).getKelompok());
                 }
 
-                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(Tambah_KuliahPenggantiAsisten.this, simple_spinner_item, KelompokNama);
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(Tambah_KuliahPenggantiDosen.this, simple_spinner_item, KelompokNama);
                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
                 spinner_kelompok.setAdapter(spinnerArrayAdapter);
 
@@ -516,7 +433,7 @@ public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
                     LabNama.add(labs.get(i).getNama_lab().toString());
                 }
 
-                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(Tambah_KuliahPenggantiAsisten.this, simple_spinner_item, LabNama);
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(Tambah_KuliahPenggantiDosen.this, simple_spinner_item, LabNama);
                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
                 spinner_lab.setAdapter(spinnerArrayAdapter);
 
@@ -584,13 +501,13 @@ public class Tambah_KuliahPenggantiAsisten extends AppCompatActivity {
 
 
                 if (response.body().isSuccess()){
-                    Toast.makeText(Tambah_KuliahPenggantiAsisten.this,response.body().getMessage(),Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(Tambah_KuliahPenggantiAsisten.this, Menu.class);
+                    Toast.makeText(Tambah_KuliahPenggantiDosen.this,response.body().getMessage(),Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Tambah_KuliahPenggantiDosen.this, Menu.class);
                     startActivity(intent);
                     finish();
                 }
                 else {
-                    Toast.makeText(Tambah_KuliahPenggantiAsisten.this,response.body().getMessage(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Tambah_KuliahPenggantiDosen.this,response.body().getMessage(),Toast.LENGTH_SHORT).show();
                 }
 
 

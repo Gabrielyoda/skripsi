@@ -32,7 +32,7 @@
                         <div class="form-group">
                             <label class="text-muted" for="fieldtanggal">Tanggal Penggunaan Lab :</label>
                             <div class="input-group mb-2">
-                                <input type="text" name="tanggal" id="fieldtanggal" class="form-control text-dark" readonly required>
+                                <input type="text" name="tanggal" id="fieldtanggal" value="{{ $pinjam->tanggal_pinjam }}" class="form-control text-dark" readonly required>
                             </div>
                         </div>
                         <div class="row">
@@ -79,6 +79,14 @@
                                 <input type="email" name="email" class="form-control" value="{{ $pinjam -> email_pinjam}}" required>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="text-muted">No Telepon :</label>
+                            <div class="input-group mb-2">
+                                <input type="number" name="nohp" class="form-control" value="{{ $pinjam -> nohp}}" required>
+                                <input type="hidden" name="id_user" id="id_user" value="{{$id_user}}" readonly >
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label class="text-muted">Ruang lab yang digunakan :</label>
                             <select class="form-control" name="lab" required>

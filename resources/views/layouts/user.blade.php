@@ -42,9 +42,15 @@
             <li class="nav-item">
                 <a href="{{ Route('jadwaluser') }}" class="nav-link {{ ($title=='Jadwal') ? 'active':'' }}"><i class="fa fa-calendar"></i> &nbsp;Jadwal</a>
             </li>
+            @if(Cache::get('jabatan') != 'Dosen')
             <li class="nav-item">
-                <a href="{{ Route('kpuser') }}" class="nav-link {{ ($title=='KP') ? 'active':'' }}"><i class="fa fa-calendar-check-o"></i> &nbsp;Kuliah Pegganti</a>
+                <a href="{{ Route('kpuser') }}" class="nav-link {{ ($title=='KP') ? 'active':'' }}"><i class="fa fa-calendar-check-o"></i> &nbsp;Kuliah Pegganti Asisten</a>
             </li>
+            @elseif(Cache::get('jabatan') != 'Asisten')
+            <li class="nav-item">
+                <a href="{{ Route('kpdosen') }}" class="nav-link {{ ($title=='KP') ? 'active':'' }}"><i class="fa fa-calendar-check-o"></i> &nbsp;Kuliah Pegganti Dosen</a>
+            </li>
+            @endif
             <li class="nav-item">
                 <a href="{{ Route('pinjamlabuser') }}" class="nav-link {{ ($title=='PinjamLab') ? 'active':'' }}"><i class="fa fa-calendar-plus-o"></i> &nbsp;Peminjaman Lab</a>
             </li>
@@ -282,7 +288,7 @@
                                             $('#'+i+'').append( '<th rowspan="'+row['sks_mtk']+'" class="align-middle">'+
                                                                     '<p class="isitabel m-0"><strong>'+row['nama_mtk']+'</strong></p>'+
                                                                     '<p class="isitabel mx-0 my-2">'+row['kelompok']+'</p>'+
-                                                                    '<p class="isitabel m-0">'+row['nama_dosen']+'</p>'+
+                                                                    '<p class="isitabel m-0">'+row['nama']+'</p>'+
                                                                 '</th>');
                                             m++;
                                         }
@@ -314,7 +320,7 @@
                                             $('#'+i+'').append( '<th rowspan="'+row['sks_mtk']+'" class="align-middle">'+
                                                                     '<p class="isitabel m-0"><strong>'+row['nama_mtk']+'</strong></p>'+
                                                                     '<p class="isitabel mx-0 my-2">'+row['kelompok']+'</p>'+
-                                                                    '<p class="isitabel m-0">'+row['nama_dosen']+'</p>'+
+                                                                    '<p class="isitabel m-0">'+row['nama']+'</p>'+
                                                                 '</th>');
                                             m++;
                                         }
@@ -421,6 +427,7 @@
                         $('select[name="namaDosen"]').append('<option>Tunggu Sejenak</option>');
                     },
                     success:function(data) {
+                             console.log(data)
                         if(data['dosen'] != 0){
                             var i = 0;
                             var panjangarray = data['dosen'].length;
@@ -432,7 +439,7 @@
                             $('select[name="namaDosen"]').append('<option value="" disabled selected>-- Pilih Dosen Pengajar --</option>');
                             for(i = 0 ; i < panjangarray ; i++)
                             {
-                                $('select[name="namaDosen"]').append('<option value="'+data['dosen'][i].id_dosen+'">'+data['dosen'][i].nip_dosen+' - '+data['dosen'][i].nama_dosen+'</option>');
+                                $('select[name="namaDosen"]').append('<option value="'+data['dosen'][i].id_user+'">'+data['dosen'][i].nama+'</option>');
                             }
                         }
                         else{
@@ -448,9 +455,11 @@
             }
         });
 
-        $("#namaDosen").change(function(){
-            var idmtk       = $("#namaMatkul").val();
-            var iddosen     = $(this).val();
+        $("#namaMatkul2").change(function(){
+            var idmtk    = $(this).val();
+            var iddosen   = $("#id_user").val();
+
+            console.log(iddosen);
             
             if(idmtk && iddosen) {
                 $.ajax({
@@ -463,6 +472,46 @@
                         $('select[name="kelompok"]').append('<option selected>Tunggu Sejenak</option>');
                     },
                     success:function(data) {
+                             console.log(data)
+                             if(data != 0){
+                            var i = 0;
+                            var panjangarray = data.length;
+                            
+                            $('#kelompok').empty();
+                            
+                            $('select[name="kelompok"]').append('<option value="" disabled selected>-- Pilih Kelompok --</option>');
+                            for(i = 0 ; i < panjangarray ; i++)
+                            {
+                                $('select[name="kelompok"]').append('<option value="'+data[i].kelompok+'">'+data[i].kelompok+'</option>');
+                            }
+                        }
+                        else{
+                            $('#kelompok').empty();
+
+                            $('select[name="kelompok"]').append('<option value="" disabled selected>Data Tidak Ditemukan</option>');
+                        }
+                    }
+                });
+            }
+        });
+
+        $("#namaDosen").change(function(){
+            var idmtk       = $("#namaMatkul").val();
+            var iddosen     = $(this).val();
+            
+           
+                if(idmtk && iddosen) {
+                $.ajax({
+                    url: "./kuliahpengganti/kelompok",
+                    type: "POST",
+                    data : {"iddosen":iddosen, "idmtk":idmtk, "_token":"{{ csrf_token() }}"},
+                    dataType: "json",
+                    beforeSend:function() {
+                        $('#kelompok').empty();
+                        $('select[name="kelompok"]').append('<option selected>Tunggu Sejenak</option>');
+                    },
+                    success:function(data) {
+                       
                         if(data != 0){
                             var i = 0;
                             var panjangarray = data.length;
@@ -683,6 +732,18 @@
             $('.isiJadwal').empty();
             $('.modal-body').find('h4').remove();
             $('.modal-body').append('<h4 class="pb-4 m-0 text-center">-- Silahkan pilih <strong>Tanggal Kuliah Pengganti</strong> terlebih dahulu --</h4>');
+        }
+    });
+
+    $('#tampilModalJamAjar2').on('click', function () {
+        var tanggal = $('#fieldtanggal').val();
+
+        if(tanggal == "")
+        {
+            $('.isiHeaderJadwal').empty();
+            $('.isiJadwal').empty();
+            $('.modal-body').find('h4').remove();
+            $('.modal-body').append('<h4 class="pb-4 m-0 text-center">-- Silahkan pilih <strong>Tanggal Peminjaman</strong> terlebih dahulu --</h4>');
         }
     });
 
@@ -935,6 +996,141 @@
         });
 
         e.preventDefault();
+    });
+
+    $(document).on('submit', '#formkp', function(e){
+
+        var form            = $(this);
+        var form_data       = JSON.stringify(form.serializeObject());
+        var data            = JSON.parse(form_data);
+        var coba            = data.token;
+       
+        
+        console.log(data);
+        $.ajax({
+            url: "./api/jadwal/tambahkpweb",
+            type: "POST",
+            cache: true,
+            headers: {
+                Authorization: 'Bearer '+coba
+            },
+            data : {
+                "id_dosen":data.namaDosen, 
+                "id_matkul":data.namaMatkul, 
+                "kelompok":data.kelompok,
+                "lab":data.ruangLab,
+                "tanggal":data.tanggalKP,
+                "jam_ajar":data.jamAjar, 
+                "_token":"{{ csrf_token() }}"
+                },
+            dataType: "json",
+
+            success: function(data){
+                alert("Sukses Menambahkan Kuliah Pengganti");
+                window.location.href = "homeuser";
+                console.log(data);
+            },
+          error: function (data) {
+            console.log(data);
+          }
+           
+        });
+
+        e.preventDefault();
+    });
+
+    $(document).on('submit', '#formkp2', function(e){
+
+        var form            = $(this);
+        var form_data       = JSON.stringify(form.serializeObject());
+        var idmtk           = $("#namaMatkul2").val();
+        var iddosen         = $("#id_user").val();
+        var data            = JSON.parse(form_data);
+        var coba            = data.token;
+
+
+
+        console.log(data);
+        $.ajax({
+            url: "./api/jadwal/tambahkpweb",
+            type: "POST",
+            cache: true,
+            headers: {
+                Authorization: 'Bearer '+coba
+            },
+            data : {
+                "id_dosen":iddosen, 
+                "id_matkul":idmtk, 
+                "kelompok":data.kelompok,
+                "lab":data.ruangLab,
+                "tanggal":data.tanggalKP,
+                "jam_ajar":data.jamAjar, 
+                "_token":"{{ csrf_token() }}"
+                },
+            dataType: "json",
+            
+            success: function(data){
+                alert("Sukses Menambahkan Kuliah Pengganti");
+                window.location.href = "homeuser";
+                console.log(data);
+            },
+          error: function (data) {
+            console.log(data);
+          }
+
+        });
+
+        e.preventDefault();
+});
+
+
+    $(document).on('submit', '#formpinjam', function(e){
+
+    var form            = $(this);
+    var form_data       = JSON.stringify(form.serializeObject());
+    var data            = JSON.parse(form_data);
+    var coba            = data.token;
+
+    sessionStorage.setItem("nim", data.id_user);
+    sessionStorage.setItem("token", coba);
+
+    console.log(coba);
+    $.ajax({
+        url: "./api/pinjam/tambahweb",
+        type: "POST",
+        headers: {
+            Authorization: 'Bearer '+coba
+        },
+        data : {
+            "token":coba,
+            "nama":data.nama,
+            "judul":data.judul,
+            "email":data.email,
+            "jamMulai":data.jamMulai,
+            "jamSelesai":data.jamSelesai,
+            "keterangan":data.keterangan,
+            "lab":data.ruangLab,
+            "id_user":data.id_user,
+            "tanggal":data.tanggalKP,
+            "nohp":data.nohp,
+            "_token":"{{ csrf_token() }}"
+            },
+        dataType: "json",
+
+        success: function(data){
+            alert("Sukses Menambahkan Peminjaman Lab");
+            
+            window.location.href = "homeuser";
+            console.log(sessionStorage.getItem("nim"));
+            console.log(data);
+        },
+    error: function (data) {
+        console.log(data);
+    }
+    
+    });
+
+    e.preventDefault();
     });
 
     function detailLab(id) {

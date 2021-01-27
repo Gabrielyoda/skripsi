@@ -7,7 +7,7 @@
                 <h3 class="card-title text-center">Tambah Peminjaman Lab</h3>
                 <hr>
                 <div class="canvas-wrapper px-4">
-                    <form action="{{ Route('prosestambahpinjamlabuser') }}" method="post" enctype='multipart/form-data'>
+                    <form id="formpinjam" enctype='multipart/form-data'>
                         {{ csrf_field() }}
                         <div class="form-group">
                             <label class="text-muted">Nama Lengkap :</label>
@@ -36,20 +36,19 @@
                                 <textarea class="form-control" name="keterangan" rows="3" required></textarea>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="text-muted">Surat Peminjaman Laboratorium Komputer :</label>
-                            <input type="file" name="surat" accept="image/*,.doc,.docx,.pdf" class="form-control-file" required>
-                        </div>
+                        
                         
                         <div class="form-group">
-                            <label class="text-muted" for="fieldtanggal">Tanggal Penggunaan Lab :</label>
+                            <label class="text-muted" for="fieldtanggal">Tanggal Kegiatan :</label>
                             <div class="input-group mb-2">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text" for="fieldtanggal"><i class="fa fa-calendar-check-o"></i></label>
                                 </div>
-                                <input type="text" name="tanggal" id="fieldtanggal" class="form-control text-dark" readonly required>
+                                <input type="text" name="tanggalKP" id="fieldtanggal" class="form-control text-dark" readonly required>
                             </div>
                         </div>
+                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -88,13 +87,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="text-muted" for="tampilModalLabTersedia">Ruang Lab yang digunakan :</label>
+
+                        <div class="text-center mb-2">
+                            <button type="button" id="tampilModalJamAjar2" class="btn btn-primary" data-toggle="modal" data-target="#modalJamAjar">-- Pilih Lab --</button>
+                        </div>
+                         <div class="form-group">
+                            <label class="text-muted">Ruang Lab Yang Tersedia:</label>
                             <div class="input-group mb-2">
                                 <div class="input-group-prepend">
-                                    <label class="input-group-text" for="tampilModalLabTersedia"><i class="fa fa-building-o"></i></label>
+                                    <label class="input-group-text"><i class="fa fa-building-o"></i></label>
                                 </div>
-                                <input type="text" name="ruangLab" class="form-control text-dark" id="tampilModalLabTersedia" data-toggle="modal" data-target="#modalLabTersedia" readonly required>
+                                <input type="text" name="ruangLab" id="fieldlab" class="form-control text-dark" readonly required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -103,17 +106,22 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text">@</div>
                                 </div>
+                                <input type="hidden" name="id_user" id="token" value="{{$id_user}}" readonly >
+                                <input type="hidden" name="token" id="token" value="{{$token}}" readonly >
                                 <input type="email" name="email" class="form-control" required>
                             </div>
                         </div>
+
                         <div class="form-group">
-                            <label class="text-muted">Butuh Asisten Pengawas?</label>
-                            &nbsp; &nbsp;<input type="radio" name="asisten" id="ya" value="ya"><label for="ya">&nbsp;Ya</label> 
-                            &nbsp; &nbsp;<input type="radio" name="asisten" id="tidak" value="tidak" checked><label for="tidak">&nbsp;Tidak</label>
-                            
-                            <div id="asisten_jaga">
+                            <label class="text-muted">No Hp</label>
+                            <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                    <label class="input-group-text"><i class="fa fa-phone"></i></label>
+                                </div>
+                                <input type="number" name="nohp" class="form-control" required>
                             </div>
                         </div>
+                        
                         <br><hr><br>
                         <div class="text-center">
                             <input type="hidden" name="lab" id="lab" readonly required>
@@ -140,6 +148,25 @@
             </div>
             <!-- Modal body -->
             <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalJamAjar">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Pilih Jam Ajar dan Ruang Lab</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <table class="table table-bordered tabelUser text-center">
+                    <tr class="isiHeaderJadwal"></tr>
+                    <tbody class="isiJadwal border-0"></tbody>
+                </table>
             </div>
         </div>
     </div>

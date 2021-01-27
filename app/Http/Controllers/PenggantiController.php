@@ -16,6 +16,8 @@ use App\Lab;
 use App\User;
 use App\KuliahPengganti;
 use Alert;
+use App\TahunAjaran;
+use App\Semester;
 
 
 
@@ -51,11 +53,14 @@ class PenggantiController extends Controller
 
         $nama = $user -> nama;
 
+        $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
+        $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
+
         $matkul = DB::table('jadwal')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
                     ->select('matakuliah.id_mtk','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk')
-                    ->where('jadwal.tahunajaran','=',$request->session()->get('tahunajaran'))
-                    ->where('jadwal.semester','=',$request->session()->get('semester'))
+                    ->where('jadwal.tahunajaran','=',$tahun->tahunajaran)
+                    ->where('jadwal.semester','=',$semester->semester)
                     ->groupBy('matakuliah.kd_mtk')
                     ->get();
 
@@ -65,8 +70,8 @@ class PenggantiController extends Controller
         ->with('matkul', $matkul)
         ->with('lab', $lab)
         ->with('nama', $nama)
-        ->with('semester', $request->session()->get('semester'))
-        ->with('tahunajaran', $request->session()->get('tahunajaran'))
+        ->with('semester', $tahun->tahunajaran)
+        ->with('tahunajaran', $semester->semester)
         ->with('title', 'Kelas Pengganti');
     }
 
@@ -75,11 +80,12 @@ class PenggantiController extends Controller
         $mtk        = $request->get('namaMatkul');
         $dosen      = $request->get('namaDosen');
         $kelompok   = strtoupper($request->get('kelompok'));
-        $lab        = $request->get('namaLab');
+        $cariLab    = Lab::select('id_lab')->where('nama_lab', $request->get('ruangLab'))->first();
+        $lab        = $cariLab->id_lab;
         $tanggalkp  = $request->get('tanggalKP');
         $jamAjar    = $request->get('jamAjar');
 
-       // dd($jamAjar);
+       
 
         $tanggal    = $this->caritanggal($tanggalkp);
         $hari       = $this->carihari($tanggal);
@@ -124,6 +130,24 @@ class PenggantiController extends Controller
                 $cek = 1;
             }
         }
+
+        $cektanggal     = DB::table('pinjamlab')
+                                ->select('jam_pinjam')
+                                ->where('id_lab', '=', $lab)
+                                ->where('tanggal_pinjam', '=', $tanggal)
+                                ->get();
+
+               
+            foreach($cektanggal as $cektanggals) 
+            {
+                $jamKeluar  = substr($cektanggals -> jam_pinjam, -5);
+                $jamMasuk   = substr($cektanggals -> jam_pinjam, 0, -8);
+                                                                                    
+                    if($jamKeluar >= $jamAjarMasuk && $jamMasuk <= $jamAjarKeluar) 
+                        {
+                            $cek = 1;
+                        }
+            }
         
         if($cek == 0)
         {

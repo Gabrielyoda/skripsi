@@ -61,19 +61,8 @@ class AuthController extends Controller
 
         //untuk get 1 record pake first
         // $user = User::where('nim', $request->input('nim'))->first();
-        $user = User::select('nim', 'nama','telepon','email','jabatan')->where('email', $request->input('email'))->first();
+        $user = User::select('id_user', 'nama','telepon','email','jabatan')->where('email', $request->input('email'))->first();
 
-        //untuk get all record pake get()
-        //$user = User::where('nim', $request->input('nim'))->get();
-
-            //ini proses enkripsi
-         $inputText = $user->nim;
-         $inputKey = "abcdefghijuklmno0123456789012345";
-         $blockSize = 256;
-         $aes = new Prosesaes($inputText, $inputKey, $blockSize);
-         $enc = $aes->encrypt();
-
-         $nama = $this-> dekripsi($user->nama);
         
 
         
@@ -82,6 +71,7 @@ class AuthController extends Controller
             'message' => "Berhasil Login",
             'data' => 
             [
+                "id_user" => $user->id_user,
                 "nama" => $user->nama,
                 "telepon" => $user->telepon,
                 "email" => $user->email,
@@ -115,8 +105,6 @@ class AuthController extends Controller
  
     public function getAuthUser(Request $request)
     {
-       
- 
         $admins = JWTAuth::authenticate($request->token);
  
         return response()->json(['admins' => $admins]);

@@ -52,16 +52,17 @@ public class Tambah_Pinjam_Lab extends AppCompatActivity {
     private List<String> LabId = new ArrayList<String>();//add ids in this list
     private ArrayList<String> LabNama = new ArrayList<String>();
 
-    String id_spinner,jam_mulai_str,jam_selesai_str,tanngal;
+    String id_spinner,jam_mulai_str,jam_selesai_str,tanngal,no_hp;
 
     private ImageView tgl_pinjam;
     private String[] Item = {"07:00","08:00","09:00","10:00", "11:00","12:00","13:00","14:00","15.00"};
+    private String[] Item2 = {"10:00", "11:00","12:00","13:00","14:00","15.00"};
 
     Calendar myCalendar;
     String bulan_ar[] = {"Januari", "Februari", "Maret","April", "Mei", "Juni","Juli","Agustus", "Oktober","September", "November","Desember"};
     TextView txt_tgl;
     Button tambah;
-    EditText nama,judul,keterangan,email;
+    EditText nama,judul,keterangan,email,nohp;
 
 
     @Override
@@ -79,13 +80,16 @@ public class Tambah_Pinjam_Lab extends AppCompatActivity {
         judul = findViewById(R.id.txt_judul_pinjam);
         keterangan = findViewById(R.id.txt_keterangan_pinjam);
         email = findViewById(R.id.txt_email_pinjam);
+        nohp = findViewById(R.id.txt_no_hp_pinjam);
 
 
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
             android.R.layout.simple_spinner_dropdown_item,Item);
+        final ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this,
+            android.R.layout.simple_spinner_dropdown_item,Item2);
         spinnerJamMulai.setAdapter(adapter);
-        spinnerJamSelesai.setAdapter(adapter);
+        spinnerJamSelesai.setAdapter(adapter2);
 
 
         SimpleDateFormat hari = new SimpleDateFormat("EEEE");
@@ -142,7 +146,7 @@ public class Tambah_Pinjam_Lab extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //id_spinner = parent.getItemAtPosition(position).toString();
-                jam_selesai_str = adapter.getItem(position);
+                jam_selesai_str = adapter2.getItem(position);
             }
 
             @Override
@@ -154,7 +158,7 @@ public class Tambah_Pinjam_Lab extends AppCompatActivity {
         tgl_pinjam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(Tambah_Pinjam_Lab.this, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(Tambah_Pinjam_Lab.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
@@ -188,7 +192,9 @@ public class Tambah_Pinjam_Lab extends AppCompatActivity {
                     }
                 },
                     myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                    myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    myCalendar.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                datePickerDialog.show();
             }
         });
 
@@ -209,13 +215,15 @@ public class Tambah_Pinjam_Lab extends AppCompatActivity {
         String jam_mulaistr = jam_mulai_str;
         String jam_selesaistr = jam_selesai_str;
         String labstr = id_spinner;
+        no_hp = nohp.getText().toString();
 
         User user = PrefUtil.getUser(this, PrefUtil.USER_SESSION);
         String token = user.getData().getToken();
+        String id_user = String.valueOf(user.getData().getId_user());
 
         Api api = Config.getClient().create(Api.class);
         Call<BaseResponse> update= api.tambah("Bearer "+token,namastr,judulstr,keteranganstr,tanggalstr,jam_mulaistr,
-            jam_selesaistr,labstr,emailstr);
+            jam_selesaistr,labstr,emailstr,no_hp,id_user);
 
         update.enqueue(new Callback<BaseResponse>() {
             @Override
@@ -231,7 +239,6 @@ public class Tambah_Pinjam_Lab extends AppCompatActivity {
                 else {
                     Toast.makeText(Tambah_Pinjam_Lab.this,response.body().getMessage(),Toast.LENGTH_SHORT).show();
                 }
-
 
             }
 

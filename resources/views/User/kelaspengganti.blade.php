@@ -7,7 +7,7 @@
                 <h3 class="card-title text-center">Tambah Kuliah Pengganti</h3>
                 <hr>
                 <div class="canvas-wrapper px-4">
-                    <form action="{{ Route('prosestambahkpuser') }}" method="post">
+                    <form id='formkp' method="post">
                         {{ csrf_field() }}
                         <div class="form-group">
                             <label class="text-muted">Mata Kuliah :</label>
@@ -23,6 +23,7 @@
                                 </select>
                             </div>
                         </div>
+                        <input type="hidden" name="token" id="token" value="{{$token}}" readonly >
                         <input type="hidden" name="sks" id="jumlahSks" readonly >
                         <div class="form-group">
                             <label class="text-muted">Dosen Pengajar :</label>
@@ -35,6 +36,7 @@
                                 </select>
                             </div>
                         </div>
+                        
                         <div class="form-group">
                             <label class="text-muted">Kelompok :</label>
                             <div class="input-group mb-2">
@@ -46,6 +48,7 @@
                                 </select>
                             </div>
                         </div>
+                        
                         <div class="form-group">
                             <label class="text-muted" for="fieldtanggal">Tanggal Kuliah Pengganti :</label>
                             <div class="input-group mb-2">
@@ -67,12 +70,14 @@
                                 <input type="text" name="jamAjar" id="fieldjam" class="form-control text-dark" readonly required>
                             </div>
                         </div>
+                        
                         <div class="form-group">
                             <label class="text-muted">Ruang Lab :</label>
                             <div class="input-group mb-2">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text"><i class="fa fa-building-o"></i></label>
                                 </div>
+                                <input type="hidden" name="idLab" id="fieldlab2" class="form-control text-dark" readonly required>
                                 <input type="text" name="ruangLab" id="fieldlab" class="form-control text-dark" readonly required>
                             </div>
                         </div>
@@ -80,7 +85,7 @@
                         <div class="text-center">
                             <div class="btn-group">
                                 <a href="{{ Route('jadwaluser') }}" class="btn btn-secondary pt-3 pb-3 pr-5 pl-5"  style="color:black"><i class="fa fa-arrow-left fa-lg"></i> Kembali</a>
-                                <button type="submit" name="simpan" class="btn btn-info pt-3 pb-3 pl-5 pr-5">Simpan <i class="fa fa-save fa-lg"></i></button>
+                                <button type="submit" name="simpan" id="kelaspengganti" class="btn btn-info pt-3 pb-3 pl-5 pr-5">Simpan <i class="fa fa-save fa-lg"></i></button>
                             </div>
                         </div>
                     </form>

@@ -12,16 +12,44 @@ use App\Lab;
 use App\PinjamLab;
 use App\Software;
 use App\Spesifikasi;
+use Illuminate\Support\Facades\Cache;
 
 class PinjamLabUserController extends Controller
 {
     function index(Request $request)
     {
+        $token = Cache::get('toke');
+        $id_user = Cache::get('id_user');
+        // $token = $request->session()->get('token');
+        // $id_user = $request->session()->get('nim');
+
+        
+
         $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
         $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
         
         return view('User\pinjamlab')
-        ->with('title', 'PinjamLab');
+        ->with('title', 'PinjamLab')
+        ->with('token',$token)
+        ->with('id_user',$id_user);
+    }
+
+    function index2(Request $request)
+    {
+        $token = Cache::get('toke');
+        $id_user = Cache::get('id_user');
+        // $token = $request->session()->get('token');
+        // $id_user = $request->session()->get('nim');
+
+        
+
+        $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
+        $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
+        
+        return view('User\pinjamlabdosen')
+        ->with('title', 'PinjamLab')
+        ->with('token',$token)
+        ->with('id_user',$id_user);
     }
 
     function prosestambah(Request $request)

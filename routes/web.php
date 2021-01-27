@@ -102,6 +102,7 @@ Route::group(['prefix'=>'/admin'], function() {
     Route::get('/pinjamlab', 'PinjamLabController@index')->name('pinjamlab');
     Route::get('/pinjamlab/tambah', 'PinjamLabController@tambah')->name('tambahpinjamlab');
     Route::post('/pinjamlab/prosestambah', 'PinjamLabController@prosestambah')->name('prosestambahpinjamlab');
+    Route::get('/pinjamlab/view/{id_pinjam}', 'PinjamLabController@view')->name('viewpinjamlab');
     Route::get('/pinjamlab/ubah/{id_pinjam}', 'PinjamLabController@ubah')->name('ubahpinjamlab');
     Route::post('/pinjamlab/prosesubah', 'PinjamLabController@prosesubah')->name('prosesubahpinjamlab');
     Route::get('/pinjamlab/hapus/{id_pinjam}', 'PinjamLabController@hapus')->name('hapuspinjamlab');
@@ -116,6 +117,7 @@ Route::get('/homeall', 'User\JadwalUserController@index')->name('jadwalall');
 Route::post('/home/waktu', 'User\JadwalUserController@gantiwaktu');
 
 Route::get('/kuliahpengganti', 'User\JadwalUserController@kelaspengganti')->name('kpuser');
+Route::get('/kuliahpenggantiDosen', 'User\JadwalUserController@kelaspengganti2')->name('kpdosen');
 Route::post('/kuliahpengganti/prosestambah', 'User\JadwalUserController@prosestambah')->name('prosestambahkpuser');
 
 Route::get('/peminjamanlab', 'User\PinjamLabUserController@index')->name('pinjamlabuser');

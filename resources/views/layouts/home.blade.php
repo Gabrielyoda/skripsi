@@ -52,7 +52,7 @@
             </li>
             <br>
             <li class="text-center">
-                <a href="{{ Route('loginadmin') }}" class="nav-link border rounded mx-4">Masuk Asisten</a>
+                <a href="{{ Route('loginadmin') }}" class="nav-link border rounded mx-4">Login</a>
             </li>
         </ul>
     </nav>
@@ -307,7 +307,7 @@
                                             $('#'+i+'').append( '<th rowspan="'+row['sks_mtk']+'" class="align-middle">'+
                                                                     '<p class="isitabel m-0"><strong>'+row['nama_mtk']+'</strong></p>'+
                                                                     '<p class="isitabel mx-0 my-2">'+row['kelompok']+'</p>'+
-                                                                    '<p class="isitabel m-0">'+row['nama_dosen']+'</p>'+
+                                                                    '<p class="isitabel m-0">'+row['nama']+'</p>'+
                                                                 '</th>');
                                             m++;
                                         }
@@ -339,7 +339,7 @@
                                             $('#'+i+'').append( '<th rowspan="'+row['sks_mtk']+'" class="align-middle">'+
                                                                     '<p class="isitabel m-0"><strong>'+row['nama_mtk']+'</strong></p>'+
                                                                     '<p class="isitabel mx-0 my-2">'+row['kelompok']+'</p>'+
-                                                                    '<p class="isitabel m-0">'+row['nama_dosen']+'</p>'+
+                                                                    '<p class="isitabel m-0">'+row['nama']+'</p>'+
                                                                 '</th>');
                                             m++;
                                         }
@@ -468,7 +468,7 @@
                             $('select[name="namaDosen"]').append('<option value="" disabled selected>Data Tidak Ditemukan</option>');
                         }
                         $('#jumlahSks').val(data['sks'].sks_mtk);
-                    }
+                    },
                 });
             }
         });

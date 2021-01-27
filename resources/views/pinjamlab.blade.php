@@ -39,6 +39,7 @@
                                     <td>{{ $joins -> nama_lab }}</td>
                                     <td class="text-center">
                                         <div class="btn-group">
+                                            <a class="btn btn-primary text-white" href="{{ route('viewpinjamlab', $joins -> id_pinjam ) }}"><i class="fa fa-eye fa-lg"></i> Lihat Data</a>
                                             <a class="btn btn-warning text-white" href="{{ route('ubahpinjamlab', $joins -> id_pinjam ) }}"><i class="fa fa-edit fa-lg"></i> Ubah Data</a>
                                             <a class="btn btn-danger text-white" href="{{ route('hapuspinjamlab', $joins -> id_pinjam ) }}"><i class="fa fa-trash fa-lg"></i> Hapus Data</a>
                                         </div>

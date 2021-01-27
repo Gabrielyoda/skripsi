@@ -1,5 +1,6 @@
 package com.skripsi.penjadwalan.fragment.home;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ public class HomeFragment extends Fragment {
     private JadwalAdapter adapter;
     private PenggantiAdapter adapter2;
     private ProgressBar progressBar;
+    ProgressDialog pd;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,6 +65,10 @@ public class HomeFragment extends Fragment {
         penggantiViewModel.getPengganti().observe(getViewLifecycleOwner(), getPenggati);
         penggantiViewModel.setPengganti(token);
         showLoading(true);
+        pd = new ProgressDialog(getActivity());
+        pd.setMessage("Loading ...");
+        pd.setCancelable(false);
+        pd.show();
 
         return root;
     }
@@ -85,6 +91,7 @@ public class HomeFragment extends Fragment {
             if (pengganti != null) {
                 adapter2.setData(pengganti);
                 showLoading(false);
+                pd.hide();
             }
         }
     };

@@ -24,6 +24,11 @@ public interface Api {
     @GET("jadwal/matkul")
     Call<String> getMatakuliah();
 
+    @GET("jadwal/matkuldosen")
+    Call<String> getMatakuliahDosen(
+        @Query("iddosen") String iddosen
+    );
+
     @GET("jadwal/dosen")
     Call<String> getDosen(
         @Query("idmtk") String idmtk
@@ -41,6 +46,12 @@ public interface Api {
         @Field("email") String email,
         @Field("password") String password);
 
+    @GET("jadwal/kelompok")
+    Call<String> getpeminjamanlab(
+        @Header("Authorization") String auth,
+        @Query("id_user") String id_user
+    );
+
     @FormUrlEncoded
     @POST( Config.BASE_URL +"pinjam/tambah")
     Call<BaseResponse> tambah(
@@ -52,7 +63,10 @@ public interface Api {
         @Field("jamMulai") String jamMulai,
         @Field("jamSelesai") String jamSelesai,
         @Field("lab") String lab,
-        @Field("email") String email
+        @Field("email") String email,
+        @Field("nohp") String nohp,
+        @Field("id_user") String id_user
+
     );
 
     @FormUrlEncoded

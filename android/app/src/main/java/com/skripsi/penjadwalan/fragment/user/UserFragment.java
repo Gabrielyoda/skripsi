@@ -39,7 +39,7 @@ public class UserFragment extends Fragment {
         User user = PrefUtil.getUser(getActivity(), PrefUtil.USER_SESSION);
         String namastr = user.getData().getNama();
         String no_hpstr = user.getData().getTelepon();
-        String emailstr = user.getData().getTelepon();
+        String emailstr = user.getData().getEmail();
         String jabatanstr = user.getData().getJabatan();
 
         nama.setText(namastr);

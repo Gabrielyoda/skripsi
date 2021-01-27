@@ -43,10 +43,10 @@
 
 							<form class="form-auth-small" action="{{ Route('prosesloginadmin') }}" method="post">
                             {{ csrf_field() }}
-								<div class="form-group {{ $errors->has('nim') ? 'has-error' : '' }}">
+								<div class="form-group {{ $errors->has('email') ? 'has-error' : '' }}">
 									<label for="signin-email" class="control-label sr-only">Email</label>
-									<input type="text"  name="nim" placeholder="Nim" class="form-control" required>
-                                    <small class="text-danger">{{ $errors->first('nim') }}</small>
+									<input type="email"  name="email" placeholder="Email" class="form-control" required>
+                                    <small class="text-danger">{{ $errors->first('email') }}</small>
 								</div>
 								<div class="form-group {{ $errors->has('password') ? 'has-error' : '' }}">
 									<label for="signin-password" class="control-label sr-only">Password</label>

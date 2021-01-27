@@ -15,16 +15,28 @@ use App\Aes256\Prosesaes;
 
 class ApiPinjamController extends Controller
 {
-    public function pinjam(){
+    public function lihatpeminjaman(Request $request){
+
+        $pinjam = auth()->user()->pinjam;
+
+        $id         = $request->get('id_user');
+
         
         $join   = DB::table('pinjamlab')
                     ->join('lab', 'pinjamlab.id_lab','=','lab.id_lab')
                     ->select('pinjamlab.id_pinjam','pinjamlab.jam_pinjam','pinjamlab.tanggal_pinjam','pinjamlab.nama_pinjam','pinjamlab.judul_pinjam','pinjamlab.keterangan_pinjam','pinjamlab.email_pinjam','lab.nama_lab','lab.kapasitas_lab')
+                    ->where('pinjamlab.id_user','=',$id)
                     ->get();
+
+                    for($i=0; $i<count($join); $i++) {
+                        $join[$i]->id_pinjam = $this->enkripsi($join[$i]->id_pinjam);
+                        $join[$i]->nama_pinjam = $this->dekripsi($join[$i]->nama_pinjam);
+                        $join[$i]->keterangan_pinjam = $this->dekripsi($join[$i]->keterangan_pinjam);
+                        $join[$i]->email_pinjam = $this->dekripsi($join[$i]->email_pinjam);
+                    }
 
         return response()->json([
             'success' => true,
-            'token' => csrf_token(),
             'data' => $join
         ]);
 
@@ -45,6 +57,9 @@ class ApiPinjamController extends Controller
     {
         $pinjam = auth()->user()->pinjam;
         
+        $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
+        $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
+        
 
         $validator = Validator::make($request->all(), [
             'nama' => 'required',
@@ -54,8 +69,9 @@ class ApiPinjamController extends Controller
             'jamMulai' => 'required',
             'jamSelesai'=> 'required',
             'lab' => 'required',
-            'email' => 'required'
-           
+            'email' => 'required',
+            'id_user' => 'required',
+            'nohp' => 'required'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors());
@@ -69,6 +85,8 @@ class ApiPinjamController extends Controller
             $jamSelesai     = $request->jamSelesai;
             $ruangLab       = $request->lab;
             $email          = $request->email;
+            $id_user        = $request->id_user;
+            $nohp           = $request->nohp;
 
             $tanggal    = $this->caritanggal($tanggalPinjam);
             $hari       = $this->carihari($tanggal);
@@ -79,8 +97,151 @@ class ApiPinjamController extends Controller
             
             $cekwaktu       = Jadwal::select('jam_ajar')    ->where('id_lab', $ruangLab)
                                                             ->where('hari', $hari)
-                                                            ->where('semester', $request->session()->get('semester'))
-                                                            ->where('tahunajaran', $request->session()->get('tahunajaran'))
+                                                            ->where('semester', $semester->semester)
+                                                            ->where('tahunajaran', $tahun->tahunajaran)
+                                                            ->get();
+            
+            foreach($cekwaktu as $cekwaktus) 
+            {
+                $jamMasuk   = substr($cekwaktus -> jam_ajar, 0, -8);
+                $jamKeluar  = substr($cekwaktus -> jam_ajar, -5);
+    
+                if($jamKeluar >= $jamAjarMasuk && $jamMasuk <= $jamAjarKeluar) 
+                {
+                    $cek = 1;
+                }
+            }
+            
+            $cektanggal     = DB::table('jadwal')
+                                ->join('kuliahpengganti', 'jadwal.id_jadwal','=','kuliahpengganti.id_jadwal')
+                                ->select('kuliahpengganti.jam_pengganti')
+                                ->where('kuliahpengganti.id_lab', '=', $ruangLab)
+                                ->where('kuliahpengganti.tanggal_pengganti', '=', $tanggal)
+                                ->where('jadwal.tahunajaran','=',$semester->semester)
+                                ->where('jadwal.semester','=',$tahun->tahunajaran)
+                                ->get();
+            
+            foreach($cektanggal as $cektanggals) 
+            {
+                $jamMasuk   = substr($cektanggals -> jam_pengganti, 0, -8);
+                $jamKeluar  = substr($cektanggals -> jam_pengganti, -5);
+                                                                
+                if($jamKeluar >= $jamAjarMasuk && $jamMasuk <= $jamAjarKeluar) 
+                {
+                    $cek = 1;
+                }
+            }
+
+            $cektanggal     = DB::table('pinjamlab')
+                                ->select('jam_pinjam')
+                                ->where('id_lab', '=', $ruangLab)
+                                ->where('tanggal_pinjam', '=', $tanggal)
+                                ->get();
+
+               
+            foreach($cektanggal as $cektanggals) 
+            {
+                $jamKeluar  = substr($cektanggals -> jam_pinjam, -5);
+                $jamMasuk   = substr($cektanggals -> jam_pinjam, 0, -8);
+                                                                                    
+                    if($jamKeluar >= $jamAjarMasuk && $jamMasuk <= $jamAjarKeluar) 
+                        {
+                            $cek = 1;
+                        }
+            }
+
+            
+            $nama_baru = $this->enkripsi($nama);
+            $keterangan_baru = $this->enkripsi($keterangan);
+            $email_baru = $this->enkripsi($email);
+
+            if($cek == 0){
+            $pinjam  =  new PinjamLab();
+            $pinjam  -> jam_pinjam          = $jamMulai.' - '.$jamSelesai;
+            $pinjam  -> tanggal_pinjam      = $this->caritanggal($tanggalPinjam);
+            $pinjam  -> nama_pinjam         = $nama_baru;
+            $pinjam  -> judul_pinjam        = $judul;
+            $pinjam  -> keterangan_pinjam   = $keterangan_baru;
+            $pinjam  -> email_pinjam        = $email_baru;
+            $pinjam  -> id_lab              = $ruangLab;
+            $pinjam  -> id_user             = $id_user;
+            $pinjam  -> nohp                = $nohp;
+
+                
+                    
+                if($pinjam->save())
+                {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'data berhasil disimpan'
+                    ]); 
+                }
+                else
+                {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Peminjaman lab anda bentrok dengan jadwal yang ada'
+                    ]);
+                }
+            }
+            else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Peminjaman lab anda bentrok dengan jadwal yang ada'
+                ]);
+            
+            } 
+            
+    }
+
+    function prosestambahweb(Request $request)
+    {
+        $pinjam = auth()->user()->pinjam;
+        $cariLab    = Lab::select('id_lab')->where('nama_lab', $request->get('lab'))->first();
+        $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
+        $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
+        
+
+        
+
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required',
+            'judul' => 'required',
+            'keterangan'=> 'required',
+            'tanggal' => 'required',
+            'jamMulai' => 'required',
+            'jamSelesai'=> 'required',
+            'lab' => 'required',
+            'email' => 'required',
+            'id_user' => 'required',
+            'nohp' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
+            $nama           = $request->nama;
+            $judul          = $request->judul;
+            $keterangan     = $request->keterangan;
+            $tanggalPinjam  = $request->tanggal;
+            $jamMulai       = $request->jamMulai;
+            $jamSelesai     = $request->jamSelesai;
+            $ruangLab       = $cariLab->id_lab;
+            $email          = $request->email;
+            $id_user        = $request->id_user;
+            $nohp           = $request->nohp;
+
+            $tanggal    = $this->caritanggal($tanggalPinjam);
+            $hari       = $this->carihari($tanggal);
+
+            $cek = 0;
+            $jamAjarMasuk    = $jamMulai;  
+            $jamAjarKeluar   = $jamSelesai;
+            
+            $cekwaktu       = Jadwal::select('jam_ajar')    ->where('id_lab', $ruangLab)
+                                                            ->where('hari', $hari)
+                                                            ->where('semester', $semester->semester)
+                                                            ->where('tahunajaran', $tahun->tahunajaran)
                                                             ->get();
             
             foreach($cekwaktu as $cekwaktus) 
@@ -127,11 +288,15 @@ class ApiPinjamController extends Controller
             $pinjam  -> keterangan_pinjam   = $keterangan_baru;
             $pinjam  -> email_pinjam        = $email_baru;
             $pinjam  -> id_lab              = $ruangLab;
+            $pinjam  -> id_user             = $id_user;
+            $pinjam  -> nohp                = $nohp;
 
                 
                     
                 if($pinjam->save())
                 {
+                    $request->session() -> put('token', $request->token);
+                    $request->session() -> put('nim', $id_user);
                     return response()->json([
                         'success' => true,
                         'message' => 'data berhasil disimpan'

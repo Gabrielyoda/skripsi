@@ -43,7 +43,7 @@
                                 <th rowspan="{{ $joins -> sks_mtk }}" class="align-middle">
                                     <p class="isitabel m-0"><strong>{{ $joins -> nama_mtk }}</strong></p>
                                     <p class="isitabel mx-0 my-2">{{ $joins -> kelompok }}</p>
-                                    <p class="isitabel m-0">{{ $joins -> nama_dosen }}</p>
+                                    <p class="isitabel m-0">{{ $joins -> nama }}</p>
                                 </th>
                                 @php
                                     $m++;
@@ -74,7 +74,7 @@
                                 <th rowspan="{{ $joinKPs -> sks_mtk }}" class="align-middle">
                                     <p class="isitabel m-0"><strong>{{ $joinKPs -> nama_mtk }}</strong></p>
                                     <p class="isitabel mx-0 my-2">{{ $joinKPs -> kelompok }}</p>
-                                    <p class="isitabel m-0">{{ $joinKPs -> nama_dosen }}</p>
+                                    <p class="isitabel m-0">{{ $joinKPs -> nama }}</p>
                                 </th>
                                 @php
                                     $m++;

@@ -13,7 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Penjadwalan">
-        <activity android:name=".activity.Tambah_KuliahPengganti"></activity>
+        <activity android:name=".activity.Tambah_KuliahPenggantiDosen"></activity>
+        <activity android:name=".activity.DetailPeminjaman" />
+        <activity android:name=".activity.Peminjaman_Lab" />
+        <activity android:name=".activity.Tambah_KuliahPenggantiAsisten" />
         <activity android:name=".activity.Tambah_Pinjam_Lab" />
         <activity android:name=".activity.Menu" />
         <activity android:name=".activity.MainActivity" />

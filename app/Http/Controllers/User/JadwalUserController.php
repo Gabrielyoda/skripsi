@@ -16,6 +16,10 @@ use App\User;
 use App\Lab;
 use App\KuliahPengganti;
 use App\PinjamLab;
+use App\Aes256\Prosesaes;
+
+use Illuminate\Support\Facades\Cache;
+
 
 class JadwalUserController extends Controller
 {
@@ -50,6 +54,7 @@ class JadwalUserController extends Controller
                     ->where('jadwal.tahunajaran','=', $tahun->tahunajaran)
                     ->where('jadwal.semester','=', $semester->semester)
                     ->get();
+
                     
 
         $joinPinjam     = DB::table('pinjamlab')
@@ -57,6 +62,10 @@ class JadwalUserController extends Controller
                             ->select('pinjamlab.jam_pinjam','pinjamlab.nama_pinjam','pinjamlab.judul_pinjam','lab.nama_lab')
                             ->where('pinjamlab.tanggal_pinjam','=', date('Y-m-d'))
                             ->get();
+
+                            for($i=0; $i<count($joinPinjam); $i++) {
+                                $joinPinjam[$i]->nama_pinjam = $this->dekripsi($joinPinjam[$i]->nama_pinjam);
+                            }
 
         $data   = array();
 
@@ -118,8 +127,11 @@ class JadwalUserController extends Controller
         $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
         $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
 
+        //dd($request->session()->get('token'));
+
         $hari_ini       = $this->cekhari();
         $tanggal_ini    = $this->cektanggal();
+        $jabatan        = Cache::get('jabatan');
 
         $join   = DB::table('jadwal')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
@@ -194,6 +206,11 @@ class JadwalUserController extends Controller
             );
         }
 
+        $flag=0;
+        if($jabatan != "Dosen"){
+            $flag = 1;//ini berarti dia asisten
+        }
+
         return view('User\homeuser')
         ->with('join', $join)
         ->with('joinKP', $joinKP)
@@ -239,6 +256,10 @@ class JadwalUserController extends Controller
                         ->select('pinjamlab.jam_pinjam','pinjamlab.nama_pinjam','pinjamlab.judul_pinjam','lab.nama_lab')
                         ->where('pinjamlab.tanggal_pinjam','=', $tanggal_ini)
                         ->get();
+
+                        for($i=0; $i<count($joinPinjam); $i++) {
+                            $joinPinjam[$i]->nama_pinjam = $this->dekripsi($joinPinjam[$i]->nama_pinjam);
+                        }
 
         $data   = array();
         $jamMasuk   = array('06:15', '07:10', '08:00', '08:55', '09:45', '10:40', '11:35', '12:30', '13:25', '14:20', '15:15', '16:10', '17:05');
@@ -297,131 +318,194 @@ class JadwalUserController extends Controller
         $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
         $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
 
-        $matkul = Matakuliah::all();
+        $matkul = DB::table('jadwal')
+        ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
+        ->select('matakuliah.id_mtk','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk')
+        ->where('jadwal.tahunajaran','=',$tahun->tahunajaran)
+        ->where('jadwal.semester','=',$semester->semester)
+        ->groupBy('jadwal.id_user')
+        ->get();
         $dosen  = User::select('*')->orderBy('nama')->where('jabatan','=', 'Dosen')->get();
+        $token = Cache::get('toke');
+        
         
         return view('User\kelaspengganti')
         ->with('matkul', $matkul)
+        ->with('token',$token)
         ->with('dosen', $dosen)
         ->with('title', 'KP');
     }
 
-    function prosestambah(Request $request)
+    function kelaspengganti2(Request $request)
     {
         $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
         $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
 
-        $mtk        = $request->get('namaMatkul');
-        $dosen      = $request->get('namaDosen');
-        $kelompok   = strtoupper($request->get('kelompok'));
-        $tanggalkp  = $request->get('tanggalKP');
-        $jamAjar    = $request->get('jamAjar');
-        $cariLab    = Lab::select('id_lab')->where('nama_lab', $request->get('ruangLab'))->first();
-        $lab        = $cariLab->id_lab;
+        $token = Cache::get('toke');
+        $id_user = Cache::get('id_user');
+        $flag = 1;
 
-        $tanggal    = $this->caritanggal($tanggalkp);
-        $hari       = $this->carihari($tanggal);
-        
-        $cek = 0;
-        $jamAjarMasuk    = substr($jamAjar, 0, -8);  
-        $jamAjarKeluar   = substr($jamAjar, -5);
-        
-        $cekwaktu       = Jadwal::select('jam_ajar')    ->where('id_lab', $lab)
-                                                        ->where('hari', $hari)
-                                                        ->where('tahunajaran', $tahun->tahunajaran)
-                                                        ->where('semester', $semester->semester)
-                                                        ->get();
-        
-        foreach($cekwaktu as $cekwaktus) 
-        {
-            $jamMasuk   = substr($cekwaktus -> jam_ajar, 0, -8);
-            $jamKeluar  = substr($cekwaktus -> jam_ajar, -5);
+        $matkul = DB::table('jadwal')
+                ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
+                ->select('matakuliah.id_mtk','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk')
+                ->Where('jadwal.id_user','=',$id_user)
+                ->where('jadwal.tahunajaran','=',$tahun->tahunajaran)
+                ->where('jadwal.semester','=',$semester->semester)
+                ->groupBy('jadwal.id_user')
+                ->get();
 
-            if($jamKeluar >= $jamAjarMasuk && $jamMasuk <= $jamAjarKeluar) 
-            {
-                $cek = 1;
-            }
+       if(count($matkul) == 0){
+           $flag = 0;  
         }
         
-        $cektanggal     = DB::table('jadwal')
-                            ->join('kuliahpengganti', 'jadwal.id_jadwal','=','kuliahpengganti.id_jadwal')
-                            ->select('kuliahpengganti.jam_pengganti')
-                            ->where('kuliahpengganti.id_lab', '=', $lab)
-                            ->where('kuliahpengganti.tanggal_pengganti', '=', $tanggal)
-                            ->where('tahunajaran', $tahun->tahunajaran)
-                            ->where('semester', $semester->semester)
-                            ->get();
+       
+      
         
-        foreach($cektanggal as $cektanggals) 
-        {
-            $jamMasuk   = substr($cektanggals -> jam_pengganti, 0, -8);
-            $jamKeluar  = substr($cektanggals -> jam_pengganti, -5);
-                                                            
-            if($jamKeluar >= $jamAjarMasuk && $jamMasuk <= $jamAjarKeluar) 
-            {
-                $cek = 1;
-            }
-        }
+        return view('User\kelaspenggantidosen')
+        ->with('matkul', $matkul)
+        ->with('flag', $flag)
+        ->with('token',$token)
+        ->with('id_user',$id_user)
+        ->with('title', 'KP');
 
-        $cekpinjam      = PinjamLab::select('jam_pinjam')->where('tanggal_pinjam','=',$tanggal)->where('id_lab','=',$lab)->get();
-        
-        foreach($cekpinjam as $cekpinjams) 
-        {
-            $jamMasuk   = substr($cekpinjams -> jam_pinjam, 0, -8);
-            $jamKeluar  = substr($cekpinjams -> jam_pinjam, -5);
-                                                            
-            if($jamKeluar >= $jamAjarMasuk && $jamMasuk <= $jamAjarKeluar) 
-            {
-                $cek = 1;
-            }
-        }
-
-        if($cek == 0)
-        {
-            $jadwal = Jadwal::select('id_jadwal')
-                            ->where('kelompok','=', $kelompok)
-                            ->where('id_user', $dosen)
-                            ->where('id_mtk', $mtk)
-                            ->where('tahunajaran', $tahun->tahunajaran)
-                            ->where('semester', $semester->semester)
-                            ->first();
-
-            $kp    = new KuliahPengganti();
-            
-            $kp     -> jam_Pengganti        = $jamAjar;
-            $kp     -> tanggal_Pengganti    = $tanggal;
-            $kp     -> id_lab               = $lab;
-            $kp     -> id_jadwal            = $jadwal->id_jadwal;
-
-        //    dd($kp);
-            
-            if($kp->save())
-            {
-                $nama_mtk   = Matakuliah::select('nama_mtk')->where('id_mtk','=',$mtk)->first();
-
-                alert()->html('Berhasil Menambah Data!', 'Kuliah Pengganti <strong>'.$nama_mtk->nama_mtk.'</strong><br> pada tanggal <strong>'.$tanggalkp.'</strong> Berhasil Dibuat.', 'success')->autoClose(10000);
-                return redirect('/homeuser');
-            }
-        }
-        else
-        {
-            alert()->html('Gagal Menambah Data!', 'Waktu atau Ruang Lab Kuliah Pengganti bentrok.', 'error')->autoClose(10000);
-            return redirect('/kuliahpengganti');
-        }
     }
+
+    function prosestambah(Request $request)
+    {
+
+        $header = $request->session()->get('token');
+        $token = 'Bearer '.$header;
+       
+
+        $response = Http::withHeaders([
+            'Authorization' => $token
+        ])->post('localhost:8000/api/jadwal/tambahkp', [
+            'name' => 'Taylor',
+        ]);
+        
+        //dicoba cuman pake post
+        // $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
+        // $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
+
+        // $mtk        = $request->get('namaMatkul');
+        // $dosen      = $request->get('namaDosen');
+        // $kelompok   = strtoupper($request->get('kelompok'));
+        // $tanggalkp  = $request->get('tanggalKP');
+        // $jamAjar    = $request->get('jamAjar');
+        // $cariLab    = Lab::select('id_lab')->where('nama_lab', $request->get('ruangLab'))->first();
+        // $lab        = $cariLab->id_lab;
+
+        // $tanggal    = $this->caritanggal($tanggalkp);
+        // $hari       = $this->carihari($tanggal);
+        
+        // $cek = 0;
+        // $jamAjarMasuk    = substr($jamAjar, 0, -8);  
+        // $jamAjarKeluar   = substr($jamAjar, -5);
+        
+        // $cekwaktu       = Jadwal::select('jam_ajar')    ->where('id_lab', $lab)
+        //                                                 ->where('hari', $hari)
+        //                                                 ->where('tahunajaran', $tahun->tahunajaran)
+        //                                                 ->where('semester', $semester->semester)
+        //                                                 ->get();
+        
+        // foreach($cekwaktu as $cekwaktus) 
+        // {
+        //     $jamMasuk   = substr($cekwaktus -> jam_ajar, 0, -8);
+        //     $jamKeluar  = substr($cekwaktus -> jam_ajar, -5);
+
+        //     if($jamKeluar >= $jamAjarMasuk && $jamMasuk <= $jamAjarKeluar) 
+        //     {
+        //         $cek = 1;
+        //     }
+        // }
+        
+        // $cektanggal     = DB::table('jadwal')
+        //                     ->join('kuliahpengganti', 'jadwal.id_jadwal','=','kuliahpengganti.id_jadwal')
+        //                     ->select('kuliahpengganti.jam_pengganti')
+        //                     ->where('kuliahpengganti.id_lab', '=', $lab)
+        //                     ->where('kuliahpengganti.tanggal_pengganti', '=', $tanggal)
+        //                     ->where('tahunajaran', $tahun->tahunajaran)
+        //                     ->where('semester', $semester->semester)
+        //                     ->get();
+        
+        // foreach($cektanggal as $cektanggals) 
+        // {
+        //     $jamMasuk   = substr($cektanggals -> jam_pengganti, 0, -8);
+        //     $jamKeluar  = substr($cektanggals -> jam_pengganti, -5);
+                                                            
+        //     if($jamKeluar >= $jamAjarMasuk && $jamMasuk <= $jamAjarKeluar) 
+        //     {
+        //         $cek = 1;
+        //     }
+        // }
+
+        // $cekpinjam      = PinjamLab::select('jam_pinjam')->where('tanggal_pinjam','=',$tanggal)->where('id_lab','=',$lab)->get();
+        
+        // foreach($cekpinjam as $cekpinjams) 
+        // {
+        //     $jamMasuk   = substr($cekpinjams -> jam_pinjam, 0, -8);
+        //     $jamKeluar  = substr($cekpinjams -> jam_pinjam, -5);
+                                                            
+        //     if($jamKeluar >= $jamAjarMasuk && $jamMasuk <= $jamAjarKeluar) 
+        //     {
+        //         $cek = 1;
+        //     }
+        // }
+
+        // if($cek == 0)
+        // {
+        //     $jadwal = Jadwal::select('id_jadwal')
+        //                     ->where('kelompok','=', $kelompok)
+        //                     ->where('id_user', $dosen)
+        //                     ->where('id_mtk', $mtk)
+        //                     ->where('tahunajaran', $tahun->tahunajaran)
+        //                     ->where('semester', $semester->semester)
+        //                     ->first();
+
+        //     $kp    = new KuliahPengganti();
+            
+        //     $kp     -> jam_Pengganti        = $jamAjar;
+        //     $kp     -> tanggal_Pengganti    = $tanggal;
+        //     $kp     -> id_lab               = $lab;
+        //     $kp     -> id_jadwal            = $jadwal->id_jadwal;
+
+        // //    dd($kp);
+            
+        //     if($kp->save())
+        //     {
+        //         $nama_mtk   = Matakuliah::select('nama_mtk')->where('id_mtk','=',$mtk)->first();
+
+        //         alert()->html('Berhasil Menambah Data!', 'Kuliah Pengganti <strong>'.$nama_mtk->nama_mtk.'</strong><br> pada tanggal <strong>'.$tanggalkp.'</strong> Berhasil Dibuat.', 'success')->autoClose(10000);
+        //         return redirect('/homeuser');
+        //     }
+        // }
+        // else
+        // {
+        //     alert()->html('Gagal Menambah Data!', 'Waktu atau Ruang Lab Kuliah Pengganti bentrok.', 'error')->autoClose(10000);
+        //     return redirect('/kuliahpengganti');
+        // }
+    }
+
+    
 
     function caridosen(Request $request)
     {   
         $id         = $request->get('idmtk');
 
+        $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
+        $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
+
+
         $dosen  = DB::table('jadwal')
                     ->join('users', 'jadwal.id_user','=','users.id_user')
                     ->select('jadwal.id_user', 'users.id_user','users.nama')
                     ->where('jadwal.id_mtk','=',$id)
-                    ->where('jadwal.tahunajaran','=',$request->session()->get('tahunajaran'))
-                    ->where('jadwal.semester','=',$request->session()->get('semester'))
+                    ->where('jadwal.tahunajaran','=',$tahun->tahunajaran)
+                    ->where('jadwal.semester','=',$semester->semester)
                     ->groupBy('jadwal.id_user')
                     ->get();
+            
+
 
         $sks    = Matakuliah::select('sks_mtk')->where('id_mtk','=',$id)->first();
 
@@ -436,13 +520,16 @@ class JadwalUserController extends Controller
         $idmtk      = $request->get('idmtk');
         $iddosen    = $request->get('iddosen');
 
+        $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
+        $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
+
         $kelompok  = DB::table('jadwal')
                     ->join('users', 'jadwal.id_user','=','users.id_user')
                     ->select('jadwal.kelompok')
                     ->where('jadwal.id_mtk','=',$idmtk)
                     ->Where('jadwal.id_user','=',$iddosen)
-                    ->where('jadwal.tahunajaran','=',$request->session()->get('tahunajaran'))
-                    ->where('jadwal.semester','=',$request->session()->get('semester'))
+                    ->where('jadwal.tahunajaran','=',$tahun->tahunajaran)
+                    ->where('jadwal.semester','=',$semester->semester)
                     ->get();
 
 
@@ -612,5 +699,16 @@ class JadwalUserController extends Controller
         $tanggal_kp = $tahun.'-'.$bulan_kp.'-'.$tanggal;
         
         return $tanggal_kp;
+    }
+
+    function dekripsi($plaintext){
+        $inputText = $plaintext;
+        $inputKey = "abcdefghijuklmno0123456789012345";
+        $blockSize = 256;
+        $aes = new Prosesaes($inputText, $inputKey, $blockSize);
+        $aes->setData($inputText);
+        $dec=$aes->decrypt();
+
+        return $dec;
     }
 }

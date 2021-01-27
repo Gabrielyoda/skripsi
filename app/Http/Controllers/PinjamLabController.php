@@ -42,6 +42,7 @@ class PinjamLabController extends Controller{
     { 
         $user = User::find($request->session()->get('nim'));
 
+        $id_user = $user -> id_user;
         $nama = $user -> nama;
 
 
@@ -49,6 +50,7 @@ class PinjamLabController extends Controller{
 
         return view('tambahpinjamlab')
         ->with('lab', $lab)
+        ->with('id_user', $id_user)
         ->with('nama', $nama)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
@@ -65,6 +67,8 @@ class PinjamLabController extends Controller{
             $jamSelesai     = $request->get('jamSelesai');
             $ruangLab       = $request->get('lab');
             $email          = $request->get('email');
+            $nohp           = $request->get('nohp');
+            $id_user        = $request->get('id_user');
 
            
 
@@ -112,6 +116,24 @@ class PinjamLabController extends Controller{
                 }
             }
 
+            $cektanggal     = DB::table('pinjamlab')
+                                ->select('jam_pinjam')
+                                ->where('id_lab', '=', $ruangLab)
+                                ->where('tanggal_pinjam', '=', $tanggal)
+                                ->get();
+
+               
+            foreach($cektanggal as $cektanggals) 
+            {
+                $jamKeluar  = substr($cektanggals -> jam_pinjam, -5);
+                $jamMasuk   = substr($cektanggals -> jam_pinjam, 0, -8);
+                                                                                    
+                    if($jamKeluar >= $jamAjarMasuk && $jamMasuk <= $jamAjarKeluar) 
+                        {
+                            $cek = 1;
+                        }
+            }
+
             $nama_baru = $this->enkripsi($nama);
             $keterangan_baru = $this->enkripsi($keterangan);
             $email_baru = $this->enkripsi($email);
@@ -125,6 +147,8 @@ class PinjamLabController extends Controller{
             $pinjam  -> keterangan_pinjam   = $keterangan_baru;
             $pinjam  -> email_pinjam        = $email_baru;
             $pinjam  -> id_lab              = $ruangLab;
+            $pinjam  -> nohp                = $nohp;
+            $pinjam  -> id_user             = $id_user;
 
                 
                     
@@ -152,15 +176,53 @@ class PinjamLabController extends Controller{
         $user = User::find($request->session()->get('nim'));
 
         $nama = $user -> nama;
+        $id_user = $user -> id_user;
 
         $pinjam  = PinjamLab::find($id);
 
+        $pinjam->nama_pinjam = $this->dekripsi($pinjam->nama_pinjam);
+        $pinjam->keterangan_pinjam = $this->dekripsi($pinjam->keterangan_pinjam);
+        $pinjam->email_pinjam = $this->dekripsi($pinjam->email_pinjam);
+
+        // Fungsi mengubah date yyyy-mm-dd ke dd-MM-yyyy atau format Indonesia
+        $pinjam->tanggal_pinjam = $this->cektanggal($pinjam->tanggal_pinjam);
+        
         $lab    = Lab::select('*')->orderBy('nama_lab')->get();
 
         return view('ubahpinjamlab')
         ->with('pinjam', $pinjam)
         ->with('lab', $lab)
         ->with('nama', $nama)
+        ->with('id_user', $id_user)
+        ->with('semester', $request->session()->get('semester'))
+        ->with('tahunajaran', $request->session()->get('tahunajaran'))
+        ->with('title', 'Pinjam Lab');
+
+    }
+
+    function view(Request $request, $id)
+    { 
+        $user = User::find($request->session()->get('nim'));
+
+        $nama = $user -> nama;
+        $id_user = $user -> id_user;
+
+        $pinjam  = PinjamLab::find($id);
+
+        $pinjam->nama_pinjam = $this->dekripsi($pinjam->nama_pinjam);
+        $pinjam->keterangan_pinjam = $this->dekripsi($pinjam->keterangan_pinjam);
+        $pinjam->email_pinjam = $this->dekripsi($pinjam->email_pinjam);
+
+        // Fungsi mengubah date yyyy-mm-dd ke dd-MM-yyyy atau format Indonesia
+        $pinjam->tanggal_pinjam = $this->cektanggal($pinjam->tanggal_pinjam);
+        
+        $lab    = Lab::select('*')->orderBy('nama_lab')->get();
+
+        return view('viewpinjamlab')
+        ->with('pinjam', $pinjam)
+        ->with('lab', $lab)
+        ->with('nama', $nama)
+        ->with('id_user', $id_user)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Pinjam Lab');
@@ -178,6 +240,8 @@ class PinjamLabController extends Controller{
         $jamSelesai     = $request->get('jamSelesai');
         $ruangLab       = $request->get('lab');
         $email          = $request->get('email');
+        $nohp           = $request->get('nohp');
+        $id_user        = $request->get('id_user');
 
         $tanggal    = $this->caritanggal($tanggalPinjam);
         $hari       = $this->carihari($tanggal);
@@ -223,15 +287,22 @@ class PinjamLabController extends Controller{
             }
         }
 
+        $nama_baru = $this->enkripsi($nama);
+        $keterangan_baru = $this->enkripsi($keterangan);
+        $email_baru = $this->enkripsi($email);
+
         if($cek == 0){
         $pinjam  =  PinjamLab::find($id);
         $pinjam  -> jam_pinjam          = $jamMulai.' - '.$jamSelesai;
         $pinjam  -> tanggal_pinjam      = $this->caritanggal($tanggalPinjam);
-        $pinjam  -> nama_pinjam         = $nama;
+        $pinjam  -> nama_pinjam         = $nama_baru;
         $pinjam  -> judul_pinjam        = $judul;
-        $pinjam  -> keterangan_pinjam   = $keterangan;
-        $pinjam  -> email_pinjam        = $email;
+        $pinjam  -> keterangan_pinjam   = $keterangan_baru;
+        $pinjam  -> email_pinjam        = $email_baru;
         $pinjam  -> id_lab              = $ruangLab;
+        $pinjam  -> nohp                = $nohp;
+        $pinjam  -> id_user             = $id_user;
+
 
             
                 
@@ -332,7 +403,14 @@ class PinjamLabController extends Controller{
 
         return $dec;
     }
-
+    // mengubah format yyyy-mm-dd ke format Indonesia (dd-MM-yyyy)
+    function cektanggal($tanggal) {
+        $bulan = array (1 =>'Januari',2 =>'Februari',3 =>'Maret',4 =>'April',5 =>'Mei',6 =>'Juni',7 =>'Juli',8 =>'Agustus',9 =>'September',10 =>'Oktober',11 =>'November',12 =>'Desember');
+        
+        $pecah = explode('-', $tanggal);
+        
+        return $pecah[2].' '.$bulan[(int)$pecah[1]].' '. $pecah[0];
+    }
 }
 
 ?>

@@ -1,6 +1,7 @@
 package com.skripsi.penjadwalan.model;
 
 public class UserData {
+    private int id_user;
     private String nama,telepon,email,jabatan,token;
 
 
@@ -44,5 +45,13 @@ public class UserData {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public int getId_user() {
+        return id_user;
+    }
+
+    public void setId_user(int id_user) {
+        this.id_user = id_user;
     }
 }

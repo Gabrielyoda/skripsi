@@ -9,6 +9,7 @@ use App\User;
 use App\TahunAjaran;
 use App\Semester;
 use Alert;
+use Illuminate\Support\Facades\Cache;
 
 class UsersController extends Controller
 {
@@ -92,9 +93,9 @@ class UsersController extends Controller
                         ->orWhere('jabatan','=', 'Asisten')
                         ->get();
 
-        for($i=0; $i<count($userdb); $i++) {
-            $userdb[$i]->nama = $this->dekripsi($userdb[$i]->nama);
-        }
+        // for($i=0; $i<count($userdb); $i++) {
+        //     $userdb[$i]->nama = $this->dekripsi($userdb[$i]->nama);
+        // }
 
         return view('usersadmin')
         ->with('user', $userdb)
@@ -218,6 +219,7 @@ class UsersController extends Controller
     function logout(Request $request)
     {
         $request->session()->flush();
+        Cache::flush();
         return redirect('/admin/login');
     }
 

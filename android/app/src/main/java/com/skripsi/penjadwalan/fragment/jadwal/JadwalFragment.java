@@ -1,6 +1,7 @@
 package com.skripsi.penjadwalan.fragment.jadwal;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ public class JadwalFragment extends Fragment {
     private ArrayList<Jadwal> list = new ArrayList<>();
     private JadwalAdapter adapter;
     private ProgressBar progressBar;
+    ProgressDialog pd;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_jadwal, container, false);
@@ -67,6 +69,7 @@ public class JadwalFragment extends Fragment {
         String date = hari.format(d);
 
         myCalendar = Calendar.getInstance();
+
         String formatTanggal = "dd-MM-yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(formatTanggal);
 
@@ -85,6 +88,10 @@ public class JadwalFragment extends Fragment {
         final JadwalHarianViewModel jadwalViewModel = ViewModelProviders.of(this).get(JadwalHarianViewModel.class);
         jadwalViewModel.getJadwalHarian().observe(getViewLifecycleOwner(), getJadwal);
         jadwalViewModel.setJadwalHarian(token, tgl, Hari);
+        pd = new ProgressDialog(getActivity());
+        pd.setMessage("Loading ...");
+        pd.setCancelable(false);
+        pd.show();
 
         tanggal.setText(tanggal_all);
 
@@ -94,7 +101,7 @@ public class JadwalFragment extends Fragment {
                 new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
+                        view.setMinDate(System.currentTimeMillis() - 1000);
                         myCalendar.set(Calendar.YEAR, year);
                         myCalendar.set(Calendar.MONTH, month);
                         myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -181,6 +188,7 @@ public class JadwalFragment extends Fragment {
 
             if (jadwals != null) {
                 adapter.setData(jadwals);
+                pd.hide();
             }
         }
     };

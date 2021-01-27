@@ -5,33 +5,34 @@
     <div class="col-md-12" style="margin-bottom:20px;">
         <div class="card">
             <div class="card-block">
-                <h3 class="card-title">Tambah Data Peminjaman Lab</h3>
+                <h3 class="card-title">View Data Peminjaman Lab</h3>
                 <hr>
                 <div class="canvas-wrapper">
-                    <form action="{{ Route('prosestambahpinjamlab') }}" method="post">
+                    <form >
                         {{ csrf_field() }}
+                        <input type="hidden" name="id" value="{{ $pinjam -> id_pinjam }}" hidden>
                         <div class="form-group">
                             <label class="text-muted">Nama Lengkap :</label>
                             <div class="input-group mb-2">
-                                <input type="text" name="nama" class="form-control" required>
+                                <input type="text" name="nama" class="form-control" value="{{ $pinjam -> nama_pinjam}}" readonly>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="text-muted">Nama / Judul Kegiatan :</label>
                             <div class="input-group mb-2">
-                                <input type="text" name="judul" class="form-control" required>
+                                <input type="text" name="judul" class="form-control" value="{{ $pinjam -> judul_pinjam}}" readonly>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="text-muted">Keterangan Pinjam :</label>
                             <div class="input-group mb-2">
-                                <textarea class="form-control" name="keterangan" rows="3" required></textarea>
+                                <textarea class="form-control" name="keterangan" rows="3" readonly>{{ $pinjam -> keterangan_pinjam}}</textarea>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="text-muted" for="fieldtanggal">Tanggal Penggunaan Lab :</label>
                             <div class="input-group mb-2">
-                                <input type="text" name="tanggal" id="fieldtanggal" class="form-control text-dark" readonly required>
+                                <input type="text" name="tanggal" id="fieldtanggal" value="{{ $pinjam->tanggal_pinjam }}" class="form-control text-dark" readonly readonly>
                             </div>
                         </div>
                         <div class="row">
@@ -75,13 +76,13 @@
                         <div class="form-group">
                             <label class="text-muted">E-Mail yang dapat dihubungi :</label>
                             <div class="input-group mb-2">
-                                <input type="email" name="email" class="form-control" required>
+                                <input type="email" name="email" class="form-control" value="{{ $pinjam -> email_pinjam}}" readonly>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="text-muted">No Telepon :</label>
                             <div class="input-group mb-2">
-                                <input type="number" name="nohp" class="form-control" required>
+                                <input type="number" name="nohp" class="form-control" value="{{ $pinjam -> nohp}}" readonly>
                                 <input type="hidden" name="id_user" id="id_user" value="{{$id_user}}" readonly >
                             </div>
                         </div>
@@ -95,7 +96,6 @@
                         </div>
                         <div class="text-center">
                             <div class="btn-group">
-                                <button type="submit" name="simpan" class="btn btn-info pt-3 pb-3 pl-5 pr-5"><i class="fa fa-save fa-lg"></i> Simpan</button>
                                 <a href="{{ Route('pinjamlab') }}" class="btn btn-secondary pt-3 pb-3 pr-5 pl-5"  style="color:black"><i class="fa fa-arrow-left fa-lg"></i> Kembali</a>
                             </div>
                         </div>
