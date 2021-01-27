@@ -28,7 +28,7 @@
                                             <input type="text" class="form-control" value="{{ $profil-> nim }}" name="nim" required>
                                         </div>
                                         <!-- NIM YANG LAMA -->
-                                        <input type="hidden" value="{{ $profil-> nim }}" name="oldnim">
+                                        <input type="hidden" value="{{ $profil-> id_user }}" name="oldnim">
 
                                         <div class="col-md-3 form-group">
                                             <label>Nama Lengkap</label>

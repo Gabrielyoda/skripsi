@@ -9,14 +9,19 @@
                 <div class="canvas-wrapper">
                     <form action="{{ Route('prosesubahdosen') }}" method="post">
                         {{ csrf_field() }}
-                        <input type="hidden" name="id" value="{{ $dosen -> id_dosen }}" hidden>
-                        <div class="form-group">
-                            <label class="text-muted">NIP Dosen :</label>
-                            <input type="text" name="nipDosen" class="form-control" value="{{ $dosen -> nip_dosen }}">
-                        </div>
+                        <input type="hidden" name="id" value="{{ $dosen -> id_user }}" hidden>
+                    
                         <div class="form-group">
                             <label class="text-muted">Nama Dosen :</label>
-                            <input type="text" name="namaDosen" class="form-control" value="{{ $dosen -> nama_dosen }}" required>
+                            <input type="text" name="namaDosen" class="form-control" value="{{ $dosen -> nama }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-muted">Email Dosen :</label>
+                            <input type="text" name="emailDosen" class="form-control" value="{{ $dosen -> email }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-muted">Password Dosen :</label>
+                            <input type="password" name="passwordDosen" class="form-control" required>
                         </div>
                         <div class="text-center">
                             <div class="btn-group">

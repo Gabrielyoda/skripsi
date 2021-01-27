@@ -22,7 +22,7 @@
                             <label class="text-muted">Dosen Pengajar :</label>
                             <select class="form-control" name="namaDosen" required>
                                 @foreach ($dosen as $dosens)
-                                    <option value="{{ $dosens -> id_dosen }}" {{ ( $dosens -> id_dosen == $jadwal-> id_dosen ) ? 'selected': '' }}>{{ $dosens -> nip_dosen }} - {{ $dosens -> nama_dosen }}</option>
+                                    <option value="{{ $dosens -> id_user }}" {{ ( $dosens -> id_user == $jadwal-> id_user ) ? 'selected': '' }}>{{ $dosens -> nama }}</option>
                                 @endforeach
                             </select>
                         </div>

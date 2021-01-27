@@ -6,15 +6,15 @@ use Illuminate\Http\Request;
 use App\Admin;
 use App\TahunAjaran;
 use App\Semester;
+use App\User;
 
 class WaktuController extends Controller
 {
     function index(Request $request)
     {
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
         $thajar     = TahunAjaran::orderBy('tahunajaran', 'ASC')->get();
         $smt        = Semester::orderBy('semester', 'ASC')->get();
@@ -23,7 +23,6 @@ class WaktuController extends Controller
         ->with('thajar', $thajar)
         ->with('smt', $smt)
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Data Waktu');
@@ -40,6 +39,7 @@ class WaktuController extends Controller
 
         if($tahunajaran->save())
         {
+            alert()->html('Berhasil Tambah Data', 'Berhasil Menambahkan Data Waktu', 'success')->autoClose(10000);
             return redirect('/admin/waktu');
         }
     }
@@ -55,16 +55,16 @@ class WaktuController extends Controller
 
         if($semester->save())
         {
+            alert()->html('Berhasil Tambah Data', 'Berhasil Menambahkan Data Waktu', 'success')->autoClose(10000);
             return redirect('/admin/waktu');
         }
     }
 
     function aktifkantahun(Request $request, $id)
     { 
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
         TahunAjaran::where('status_tahunajaran', 1)
                     ->update(['status_tahunajaran' => '0']);
@@ -80,10 +80,9 @@ class WaktuController extends Controller
 
     function aktifkansemester(Request $request, $id)
     { 
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
         Semester::where('status_semester', 1)
                 ->update(['status_semester' => '0']);
@@ -103,6 +102,7 @@ class WaktuController extends Controller
 
         if($tahunajaran -> delete())
         {
+            alert()->html('Berhasil Menghapus Data', 'Berhasil Menghapus Data Waktu', 'success')->autoClose(10000); 
             return redirect('/admin/waktu');
         }
     }
@@ -113,6 +113,7 @@ class WaktuController extends Controller
 
         if($semester -> delete())
         {
+            alert()->html('Berhasil Menghapus Data', 'Berhasil Menghapus Data Waktu', 'success')->autoClose(10000); 
             return redirect('/admin/waktu');
         }
     }

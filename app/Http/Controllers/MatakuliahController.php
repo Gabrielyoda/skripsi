@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Admin;
 use App\Matakuliah;
+use App\User;
 
 use Illuminate\Http\Request;
 
@@ -10,17 +11,15 @@ class MatakuliahController extends Controller
 {
     function index(Request $request)
     {
-        $profil = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $foto  =  $profil -> foto_admin;
-        $nama  =  $profil -> nama_admin;
+        $nama = $user -> nama;
 
         $mtk    = Matakuliah::all();
 
         return view('mtkadmin')
         ->with('mtk',$mtk)
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Data Matakuliah');
@@ -28,14 +27,12 @@ class MatakuliahController extends Controller
 
     function tambah(Request $request)
     {
-        $profil = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $foto  = $profil -> foto_admin;
-        $nama  = $profil -> nama_admin;
+        $nama = $user -> nama;
 
         return view('tambahmtk')
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Data Matakuliah');
@@ -55,23 +52,22 @@ class MatakuliahController extends Controller
 
         if($mtk -> save())
         {
+            alert()->html('Berhasil Tambah Data', 'Berhasil Menamkan Data Matakuliah', 'success')->autoClose(10000);
             return redirect('/admin/matakuliah');
         }
     }
 
     function ubah(Request $request, $id)
     {
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
         $mtk  = Matakuliah::find($id);
         
         return view('ubahmtk')
         ->with('mtk', $mtk)
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Data Matakuliah');
@@ -92,6 +88,7 @@ class MatakuliahController extends Controller
 
         if($mtk->save())
         {
+            alert()->html('Berhasil Ubah Data', 'Berhasil Mengubah Data Matakuliah', 'success')->autoClose(10000);
             return redirect('/admin/matakuliah');
         }
     }
@@ -102,6 +99,7 @@ class MatakuliahController extends Controller
 
         if($mtk -> delete())
         {
+            alert()->html('Berhasil Hapus Data', 'Berhasil Menghapus Data Matakuliah', 'success')->autoClose(10000);
             return redirect('/admin/matakuliah');
         }
     }

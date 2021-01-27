@@ -23,6 +23,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
+        
         $users = new User();
         $users->nama = $request->nama;
         $users->nim = $request->nim;
@@ -37,17 +38,18 @@ class AuthController extends Controller
         ]);
     }
 
+    
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nim' => 'required|string|max:255',
+            'email' => 'required|string|max:255',
             'password'=> 'required'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
 
-        $input = $request->only('nim', 'password');
+        $input = $request->only('email', 'password');
         $jwt_token = null;
  
         if (!$jwt_token = JWTAuth::attempt($input)) {
@@ -59,7 +61,7 @@ class AuthController extends Controller
 
         //untuk get 1 record pake first
         // $user = User::where('nim', $request->input('nim'))->first();
-        $user = User::select('nim', 'nama','telepon','email','jabatan')->where('nim', $request->input('nim'))->first();
+        $user = User::select('nim', 'nama','telepon','email','jabatan')->where('email', $request->input('email'))->first();
 
         //untuk get all record pake get()
         //$user = User::where('nim', $request->input('nim'))->get();
@@ -71,19 +73,22 @@ class AuthController extends Controller
          $aes = new Prosesaes($inputText, $inputKey, $blockSize);
          $enc = $aes->encrypt();
 
+         $nama = $this-> dekripsi($user->nama);
+        
+
         
         return response()->json([
             'success' => true,
             'message' => "Berhasil Login",
             'data' => 
             [
-                "nim" => $enc,
                 "nama" => $user->nama,
                 "telepon" => $user->telepon,
                 "email" => $user->email,
-                "jabatan" => $user->jabatan               
+                "jabatan" => $user->jabatan,
+                'token' => $jwt_token
+                              
              ],
-            'token' => $jwt_token
         ]);
     }
  
@@ -116,4 +121,17 @@ class AuthController extends Controller
  
         return response()->json(['admins' => $admins]);
     }
+
+    function dekripsi($plaintext){
+        $inputText = $plaintext;
+        $inputKey = "abcdefghijuklmno0123456789012345";
+        $blockSize = 256;
+        $aes = new Prosesaes($inputText, $inputKey, $blockSize);
+        $aes->setData($inputText);
+        $dec=$aes->decrypt();
+
+        return $dec;
+    }
+
+    
 }

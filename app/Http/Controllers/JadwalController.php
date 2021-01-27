@@ -9,22 +9,22 @@ use App\Jadwal;
 use App\Matakuliah;
 use App\Dosen;
 use App\Lab;
+use App\User;
 
 class JadwalController extends Controller
 {
     function index(Request $request)
     {
         // if($request->session()->get('jabatan') != 'spv') {}
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
         $join   = DB::table('jadwal')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
                     ->join('lab', 'jadwal.id_lab','=','lab.id_lab')
-                    ->select('jadwal.id_jadwal','jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.nip_dosen','dosen.nama_dosen','lab.nama_lab','lab.kapasitas_lab')
+                    ->select('jadwal.id_jadwal','jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','users.id_user','users.nama','lab.nama_lab','lab.kapasitas_lab')
                     ->where('jadwal.tahunajaran','=',$request->session()->get('tahunajaran'))
                     ->where('jadwal.semester','=',$request->session()->get('semester'))
                     ->get();
@@ -32,7 +32,6 @@ class JadwalController extends Controller
         return view('jadwaladmin')
         ->with('join', $join)
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Jadwal');
@@ -40,13 +39,12 @@ class JadwalController extends Controller
 
     function tambah(Request $request)
     { 
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
         $matkul = Matakuliah::select('*')->orderBy('nama_mtk')->get();
-        $dosen  = Dosen::select('*')->orderBy('nama_dosen')->get();
+        $dosen  = User::select('*')->orderBy('nama')->where('jabatan','=', 'Dosen')->get();
         $lab    = Lab::select('*')->orderBy('nama_lab')->get();
 
         return view('tambahjadwal')
@@ -54,7 +52,6 @@ class JadwalController extends Controller
         ->with('dosen', $dosen)
         ->with('lab', $lab)
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Jadwal');
@@ -98,7 +95,7 @@ class JadwalController extends Controller
             $jadwal    -> semester      = $request->session()->get('semester');
             $jadwal    -> tahunajaran   = $request->session()->get('tahunajaran');
             $jadwal    -> kelompok      = $kelompok;
-            $jadwal    -> id_dosen      = $dosen;
+            $jadwal    -> id_user      = $dosen;
             $jadwal    -> id_mtk        = $mtk;
             $jadwal    -> id_lab        = $lab;
             $jadwal    -> hari          = $hari;
@@ -106,25 +103,26 @@ class JadwalController extends Controller
             
             $jadwal->save();
 
+            alert()->html('Berhasil Tambah Data', 'Berhasil Menambahkan Data Jadwal', 'success')->autoClose(10000);
             return redirect('/admin/jadwal');
         }
         else
         {
+            alert()->html('Gagal Tambah Data', 'Gagal menambahkan Data Jadwal Silahkan Cek Kembali Jadwal', 'error')->autoClose(10000);
             return redirect('/admin/jadwal/tambah');
         }
     }
 
     function ubah(Request $request, $id)
     { 
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
         $jadwal  = Jadwal::find($id);
 
         $matkul = Matakuliah::select('*')->orderBy('nama_mtk')->get();
-        $dosen  = Dosen::select('*')->orderBy('nama_dosen')->get();
+        $dosen  = User::select('*')->orderBy('nama')->where('jabatan','=', 'Dosen')->get();
         $lab    = Lab::select('*')->orderBy('nama_lab')->get();
 
         $jumlahSks = Matakuliah::select("sks_mtk")->where('id_mtk','=',$jadwal->id_mtk)->first();
@@ -162,7 +160,6 @@ class JadwalController extends Controller
         ->with('dosen', $dosen)
         ->with('lab', $lab)
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Jadwal');
@@ -182,14 +179,15 @@ class JadwalController extends Controller
         $jadwal    = Jadwal::find($id);
         
         $jadwal    -> kelompok      = $kelompok;
-        $jadwal    -> id_dosen      = $dosen;
+        $jadwal    -> id_user      = $dosen;
         $jadwal    -> id_mtk        = $mtk;
         $jadwal    -> id_lab        = $lab;
         $jadwal    -> hari          = $hari;
         $jadwal    -> jam_ajar      = $jamAjar;
 
         if($jadwal->save())
-        {
+        { 
+            alert()->html('Berhasil Ubah Data', 'Berhasil Mengubah Data Jadwal', 'success')->autoClose(10000);
             return redirect('/admin/jadwal');
         }
     }
@@ -200,6 +198,7 @@ class JadwalController extends Controller
 
         if($jadwal -> delete())
         {
+            alert()->html('Berhasil Menghapus Data', 'Berhasil Menghapus Data Jadwal', 'success')->autoClose(10000);
             return redirect('/admin/jadwal');
         }
     }

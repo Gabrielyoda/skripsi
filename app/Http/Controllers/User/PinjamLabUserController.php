@@ -26,6 +26,7 @@ class PinjamLabUserController extends Controller
 
     function prosestambah(Request $request)
     {
+        
         if($request->hasFile('surat'))
         {
             $nama           = $request->get('nama');

@@ -4,15 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Aes256\Prosesaes;
 use App\User;
 use App\TahunAjaran;
 use App\Semester;
+use Alert;
 
 class UsersController extends Controller
 {
     //ini untuk mengubah waktu
     function index(Request $request)
     {
+        
         $users          = User::find($request->session()->get('nim'));
         $tahunajaran    = TahunAjaran::orderBy('tahunajaran', 'ASC')->get();
         $semester       = Semester::orderBy('semester', 'ASC')->get();
@@ -60,9 +63,9 @@ class UsersController extends Controller
 
         $join   = DB::table('jadwal')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
                     ->join('lab', 'jadwal.id_lab','=','lab.id_lab')
-                    ->select('jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.nip_dosen','dosen.nama_dosen','lab.nama_lab','lab.kapasitas_lab')
+                    ->select('jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','users.nama','users.nama','lab.nama_lab','lab.kapasitas_lab')
                     ->where('jadwal.tahunajaran','=',$request->session()->get('tahunajaran'))
                     ->where('jadwal.semester','=',$request->session()->get('semester'))
                     ->get();
@@ -82,10 +85,19 @@ class UsersController extends Controller
 
         $nama = $users -> nama;
 
-        $user  = User::all();
+        $user   = User::all();
+        $userdb   = DB::table('users')
+                        ->select('id_user','nim', 'nama','telepon','email','jabatan')
+                        ->where('jabatan','=', 'SPV')
+                        ->orWhere('jabatan','=', 'Asisten')
+                        ->get();
+
+        for($i=0; $i<count($userdb); $i++) {
+            $userdb[$i]->nama = $this->dekripsi($userdb[$i]->nama);
+        }
 
         return view('usersadmin')
-        ->with('user', $user)
+        ->with('user', $userdb)
         ->with('nama', $nama)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
@@ -116,12 +128,22 @@ class UsersController extends Controller
         $email   = $request->get('email');
         $jabatan   = $request->get('jabatan');
         $password   = bcrypt($request->get('password'));
+        
 
-        $ceknim = User::find($nim);
+        // $cek        = DB::table('users')
+        //                 ->where('nim','=', $nim)
+        //                 ->orWhere('email','=', $email)
+        //                 ->get();
 
-        if($ceknim)
+                        $cek        = User::where('nim','=',$nim)
+                        ->orWhere('email','=', $email)
+                        ->first();
+        
+
+        if($cek)
         {
-            return back()->with('error', 'NIM telah terdaftar.');   
+            alert()->html('Gagal Tambah data', 'nim atau email telah terdaftar.', 'error')->autoClose(10000);
+            return back()->with('error', 'nim telah terdaftar.');   
         }
         else{
             $users    = new User();
@@ -197,5 +219,26 @@ class UsersController extends Controller
     {
         $request->session()->flush();
         return redirect('/admin/login');
+    }
+
+    function enkripsi($plaintext){
+        $inputText = $plaintext;
+         $inputKey = "abcdefghijuklmno0123456789012345";
+         $blockSize = 256;
+         $aes = new Prosesaes($inputText, $inputKey, $blockSize);
+         $enc = $aes->encrypt();
+
+         return $enc;
+    }
+
+    function dekripsi($plaintext){
+        $inputText = $plaintext;
+        $inputKey = "abcdefghijuklmno0123456789012345";
+        $blockSize = 256;
+        $aes = new Prosesaes($inputText, $inputKey, $blockSize);
+        $aes->setData($inputText);
+        $dec=$aes->decrypt();
+
+        return $dec;
     }
 }

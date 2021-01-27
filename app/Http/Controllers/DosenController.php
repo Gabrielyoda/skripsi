@@ -3,24 +3,28 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Dosen;
 use App\Admin;
+use App\User;
 
 class DosenController extends Controller
 {
     function index(Request $request)
     {
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
-        $dosen  = Dosen::all();
+        $dosen   = User::all();
+        $dosen   = DB::table('users')
+                    ->select('id_user','nama','email')
+                    ->where('jabatan','=', 'Dosen')
+                    ->get();
 
         return view('dosenadmin')
         ->with('dosen', $dosen)
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Dosen');
@@ -28,14 +32,12 @@ class DosenController extends Controller
 
     function tambah(Request $request)
     { 
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
-
+        $nama = $user -> nama;
+        
         return view('tambahdosen')
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Dosen');
@@ -43,36 +45,50 @@ class DosenController extends Controller
 
     function prosestambah(Request $request)
     {
-        $nip    = $request->get('nipDosen');
-        $nama   = $request->get('namaDosen');
-
-        $dosen    = new dosen();
+       
+        $nama        = $request->get('namaDosen');
+        $email    = $request->get('emailDosen');
+        $password    = bcrypt($request->get('passwordDosen'));
+        $jabatan     = "Dosen";
         
-        if(!empty($nip))
-        {
-            $dosen    -> nip_dosen        = $nip;
-        }
-        $dosen    -> nama_dosen       = $nama;
 
-        if($dosen->save())
+        
+        $cek        = User::where('email','=',$email)->first();
+                      
+                       
+
+        if($cek)
         {
-            return redirect('/admin/dosen');
+            alert()->html('Gagal Tambah data', 'Email telah terdaftar.', 'error')->autoClose(10000);
+            return back()->with('error', 'nim telah terdaftar.');   
         }
+        else{
+            $dosen    = new User();
+            $dosen    -> email      = $email;
+            $dosen    -> nama       = $nama;
+            $dosen    -> jabatan    = $jabatan;
+            $dosen    -> password   = $password;
+    
+            if($dosen->save())
+            {
+                alert()->html('Berhasil Tambah Data', 'Berhasil Menambahkan Data Dosen', 'success')->autoClose(10000);
+                return redirect('/admin/dosen');
+            }
+        }
+        
     }
 
     function ubah(Request $request, $id)
     { 
-        $admin = Admin::find($request->session()->get('nim'));
+        $user = User::find($request->session()->get('nim'));
 
-        $nama = $admin -> nama_admin;
-        $foto = $admin -> foto_admin;
+        $nama = $user -> nama;
 
-        $dosen  = Dosen::find($id);
+        $dosen  = User::find($id);
 
         return view('ubahdosen')
         ->with('dosen', $dosen)
         ->with('nama', $nama)
-        ->with('foto', $foto)
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Dosen');
@@ -80,30 +96,31 @@ class DosenController extends Controller
 
     function prosesubah(Request $request)
     {
-        $id     = $request->get('id');
-        $nip    = $request->get('nipDosen');
-        $nama   = $request->get('namaDosen');
+        $id         = $request->get('id');
+        $email   = $request->get('emailDosen');
+        $nama       = $request->get('namaDosen');
+        $password   = bcrypt($request->get('passwordDosen'));
 
-        $dosen    = Dosen::find($id);
+        $dosen    = User::find($id);
         
-        if(!empty($nip))
-        {
-            $dosen    -> nip_dosen        = $nip;
-        }
-        $dosen    -> nama_dosen       = $nama;
+        $dosen    -> email        = $email;
+        $dosen    -> nama         = $nama;
+        $dosen    -> password     = $password;
 
         if($dosen->save())
         {
+            alert()->html('Berhasil Ubah Data', 'Berhasil Mengubah Data Dosen', 'success')->autoClose(10000);
             return redirect('/admin/dosen');
         }
     }
 
     function hapus(Request $request, $id)
     {
-        $dosen    = Dosen::find($id);
+        $dosen    = User::find($id);
 
         if($dosen -> delete())
         {
+            alert()->html('Data Berhasil Dihapus', 'Berhasil Menghapus Data Dosen', 'success')->autoClose(10000);
             return redirect('/admin/dosen');
         }
     }

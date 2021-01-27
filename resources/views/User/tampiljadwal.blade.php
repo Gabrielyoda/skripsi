@@ -56,7 +56,7 @@
                                             <h3 class="tabel-body">{{ $join[$i] -> kelompok }}</h3>
                                         </div>
                                         <div class="col-md-3 p-2">
-                                            <h3 class="tabel-body">{{ $join[$i] -> nama_dosen }}</h3>
+                                            <h3 class="tabel-body">{{ $join[$i] -> nama }}</h3>
                                         </div>
                                         <div class="col-md-2 p-2">
                                             <h3 class="tabel-body">{{ $join[$i] -> nama_lab }}</h3>
@@ -76,7 +76,7 @@
                                             <h3 class="tabel-body">{{ $join[$i] -> kelompok }}</h3>
                                         </div>
                                         <div class="col-md-3 p-2">
-                                            <h3 class="tabel-body">{{ $join[$i] -> nama_dosen }}</h3>
+                                            <h3 class="tabel-body">{{ $join[$i] -> nama }}</h3>
                                         </div>
                                         <div class="col-md-2 p-2">
                                             <h3 class="tabel-body">{{ $join[$i] -> nama_lab }}</h3>
@@ -103,7 +103,7 @@
                                                 <h3 class="tabel-body">{{ $join[$i] -> kelompok }}</h3>
                                             </div>
                                             <div class="col-md-3 p-2">
-                                                <h3 class="tabel-body">{{ $join[$i] -> nama_dosen }}</h3>
+                                                <h3 class="tabel-body">{{ $join[$i] -> nama }}</h3>
                                             </div>
                                             <div class="col-md-2 p-2">
                                                 <h3 class="tabel-body">{{ $join[$i] -> nama_lab }}</h3>
@@ -123,7 +123,7 @@
                                                 <h3 class="tabel-body">{{ $join[$i] -> kelompok }}</h3>
                                             </div>
                                             <div class="col-md-3 p-2">
-                                                <h3 class="tabel-body">{{ $join[$i] -> nama_dosen }}</h3>
+                                                <h3 class="tabel-body">{{ $join[$i] -> nama }}</h3>
                                             </div>
                                              <div class="col-md-2 p-2">
                                                 <h3 class="tabel-body">{{ $join[$i] -> nama_lab }}</h3>
@@ -149,7 +149,7 @@
                                                 <h3 class="tabel-body">{{ $join[$i] -> kelompok }}</h3>
                                             </div>
                                             <div class="col-md-3 p-2">
-                                                <h3 class="tabel-body">{{ $join[$i] -> nama_dosen }}</h3>
+                                                <h3 class="tabel-body">{{ $join[$i] -> nama }}</h3>
                                             </div>
                                              <div class="col-md-2 p-2">
                                                 <h3 class="tabel-body">{{ $join[$i] -> nama_lab }}</h3>
@@ -169,7 +169,7 @@
                                                 <h3 class="tabel-body">{{ $join[$i] -> kelompok }}</h3>
                                             </div>
                                             <div class="col-md-3 p-2">
-                                                <h3 class="tabel-body">{{ $join[$i] -> nama_dosen }}</h3>
+                                                <h3 class="tabel-body">{{ $join[$i] -> nama }}</h3>
                                             </div>
                                              <div class="col-md-2 p-2">
                                                 <h3 class="tabel-body">{{ $join[$i] -> nama_lab }}</h3>
@@ -195,7 +195,7 @@
                                                 <h3 class="tabel-body">{{ $join[$i] -> kelompok }}</h3>
                                             </div>
                                             <div class="col-md-3 p-2">
-                                                <h3 class="tabel-body">{{ $join[$i] -> nama_dosen }}</h3>
+                                                <h3 class="tabel-body">{{ $join[$i] -> nama }}</h3>
                                             </div>
                                             <div class="col-md-2 p-2">
                                                 <h3 class="tabel-body">{{ $join[$i] -> nama_lab }}</h3>
@@ -215,7 +215,7 @@
                                                 <h3 class="tabel-body">{{ $join[$i] -> kelompok }}</h3>
                                             </div>
                                             <div class="col-md-3 p-2">
-                                                <h3 class="tabel-body">{{ $join[$i] -> nama_dosen }}</h3>
+                                                <h3 class="tabel-body">{{ $join[$i] -> nama }}</h3>
                                             </div>
                                              <div class="col-md-2 p-2">
                                                 <h3 class="tabel-body">{{ $join[$i] -> nama_lab }}</h3>
@@ -241,7 +241,7 @@
                                                 <h3 class="tabel-body">{{ $join[$i] -> kelompok }}</h3>
                                             </div>
                                             <div class="col-md-3 p-2">
-                                                <h3 class="tabel-body">{{ $join[$i] -> nama_dosen }}</h3>
+                                                <h3 class="tabel-body">{{ $join[$i] -> nama }}</h3>
                                             </div>
                                              <div class="col-md-2 p-2">
                                                 <h3 class="tabel-body">{{ $join[$i] -> nama_lab }}</h3>
@@ -261,7 +261,7 @@
                                                 <h3 class="tabel-body">{{ $join[$i] -> kelompok }}</h3>
                                             </div>
                                             <div class="col-md-3 p-2">
-                                                <h3 class="tabel-body">{{ $join[$i] -> nama_dosen }}</h3>
+                                                <h3 class="tabel-body">{{ $join[$i] -> nama }}</h3>
                                             </div>
                                              <div class="col-md-2 p-2">
                                                 <h3 class="tabel-body">{{ $join[$i] -> nama_lab }}</h3>
@@ -286,7 +286,7 @@
                                                 <h3 class="tabel-body">{{ $join[$i] -> kelompok }}</h3>
                                             </div>
                                             <div class="col-md-3 p-2">
-                                                <h3 class="tabel-body">{{ $join[$i] -> nama_dosen }}</h3>
+                                                <h3 class="tabel-body">{{ $join[$i] -> nama }}</h3>
                                             </div>
                                              <div class="col-md-2 p-2">
                                                 <h3 class="tabel-body">{{ $join[$i] -> nama_lab }}</h3>
@@ -306,7 +306,7 @@
                                                 <h3 class="tabel-body">{{ $join[$i] -> kelompok }}</h3>
                                             </div>
                                             <div class="col-md-3 p-2">
-                                                <h3 class="tabel-body">{{ $join[$i] -> nama_dosen }}</h3>
+                                                <h3 class="tabel-body">{{ $join[$i] -> nama }}</h3>
                                             </div>
                                              <div class="col-md-2 p-2">
                                                 <h3 class="tabel-body">{{ $join[$i] -> nama_lab }}</h3>

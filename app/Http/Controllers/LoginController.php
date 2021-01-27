@@ -35,8 +35,10 @@ class LoginController extends Controller
 
             if(Hash::check($password,$getpassword->password))
             {
-                $getdata = User::select('nama')->where('nim','=',$nim)->first();
-                $request->session() -> put('nim', $nim);
+
+                $getdata = User::select('nama','id_user')->where('nim','=',$nim)->first();
+                $id_user=$getdata['id_user'];
+                $request->session() -> put('nim', $id_user);
 
                 $record_user = User::find($request->session()->get('nim'));
                 $jabatan = $record_user['jabatan'];

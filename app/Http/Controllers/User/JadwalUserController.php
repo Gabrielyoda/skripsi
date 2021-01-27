@@ -12,6 +12,7 @@ use App\Semester;
 use App\Jadwal;
 use App\Matakuliah;
 use App\Dosen;
+use App\User;
 use App\Lab;
 use App\KuliahPengganti;
 use App\PinjamLab;
@@ -25,27 +26,31 @@ class JadwalUserController extends Controller
 
         $hari_ini       = $this->cekhari();
         $tanggal_ini    = $this->cektanggal();
+        
 
         $join   = DB::table('jadwal')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
                     ->join('lab', 'jadwal.id_lab','=','lab.id_lab')
-                    ->select('jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.nip_dosen','dosen.nama_dosen','lab.nama_lab','lab.kapasitas_lab')
+                    ->select('jadwal.id_jadwal','jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','users.id_user','users.nama','lab.nama_lab','lab.kapasitas_lab')
                     ->where('jadwal.tahunajaran','=',$tahun->tahunajaran)
                     ->where('jadwal.semester','=',$semester->semester)
                     ->where('jadwal.hari','=',$hari_ini)
                     ->get();
+
+                   
         
         $joinKP = DB::table('jadwal')
                     ->join('kuliahpengganti', 'kuliahpengganti.id_jadwal','=','jadwal.id_jadwal')
                     ->join('lab', 'kuliahpengganti.id_lab','=','lab.id_lab')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
-                    ->select('kuliahpengganti.id_kp','jadwal.kelompok','kuliahpengganti.tanggal_pengganti','kuliahpengganti.jam_pengganti','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.nip_dosen','dosen.nama_dosen','lab.nama_lab','lab.kapasitas_lab')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
+                    ->select('kuliahpengganti.id_kp','jadwal.kelompok','kuliahpengganti.tanggal_pengganti','kuliahpengganti.jam_pengganti','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','users.id_user','users.nama','lab.nama_lab','lab.kapasitas_lab')
                     ->where('kuliahpengganti.tanggal_pengganti','=', date('Y-m-d'))
                     ->where('jadwal.tahunajaran','=', $tahun->tahunajaran)
                     ->where('jadwal.semester','=', $semester->semester)
                     ->get();
+                    
 
         $joinPinjam     = DB::table('pinjamlab')
                             ->join('lab', 'lab.id_lab','=','pinjamlab.id_lab')
@@ -118,9 +123,9 @@ class JadwalUserController extends Controller
 
         $join   = DB::table('jadwal')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
                     ->join('lab', 'jadwal.id_lab','=','lab.id_lab')
-                    ->select('jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.nip_dosen','dosen.nama_dosen','lab.nama_lab','lab.kapasitas_lab')
+                    ->select('jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','users.id_user','users.nama','lab.nama_lab','lab.kapasitas_lab')
                     ->where('jadwal.tahunajaran','=',$tahun->tahunajaran)
                     ->where('jadwal.semester','=',$semester->semester)
                     ->where('jadwal.hari','=',$hari_ini)
@@ -130,8 +135,8 @@ class JadwalUserController extends Controller
                     ->join('kuliahpengganti', 'kuliahpengganti.id_jadwal','=','jadwal.id_jadwal')
                     ->join('lab', 'kuliahpengganti.id_lab','=','lab.id_lab')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
-                    ->select('kuliahpengganti.id_kp','jadwal.kelompok','kuliahpengganti.tanggal_pengganti','kuliahpengganti.jam_pengganti','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.nip_dosen','dosen.nama_dosen','lab.nama_lab','lab.kapasitas_lab')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
+                    ->select('kuliahpengganti.id_kp','jadwal.kelompok','kuliahpengganti.tanggal_pengganti','kuliahpengganti.jam_pengganti','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','users.id_user','users.nama','lab.nama_lab','lab.kapasitas_lab')
                     ->where('kuliahpengganti.tanggal_pengganti','=', date('Y-m-d'))
                     ->where('jadwal.tahunajaran','=', $tahun->tahunajaran)
                     ->where('jadwal.semester','=', $semester->semester)
@@ -210,9 +215,9 @@ class JadwalUserController extends Controller
 
         $join   = DB::table('jadwal')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
                     ->join('lab', 'jadwal.id_lab','=','lab.id_lab')
-                    ->select('jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.nip_dosen','dosen.nama_dosen','lab.nama_lab','lab.kapasitas_lab')
+                    ->select('jadwal.kelompok','jadwal.hari','jadwal.jam_ajar','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','users.id_user','users.nama','lab.nama_lab','lab.kapasitas_lab')
                     ->where('jadwal.tahunajaran','=',$tahun->tahunajaran)
                     ->where('jadwal.semester','=',$semester->semester)
                     ->where('jadwal.hari','=',$hari)
@@ -222,8 +227,8 @@ class JadwalUserController extends Controller
                     ->join('kuliahpengganti', 'kuliahpengganti.id_jadwal','=','jadwal.id_jadwal')
                     ->join('lab', 'kuliahpengganti.id_lab','=','lab.id_lab')
                     ->join('matakuliah', 'jadwal.id_mtk','=','matakuliah.id_mtk')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
-                    ->select('kuliahpengganti.id_kp','jadwal.kelompok','kuliahpengganti.tanggal_pengganti','kuliahpengganti.jam_pengganti','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','dosen.nip_dosen','dosen.nama_dosen','lab.nama_lab','lab.kapasitas_lab')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
+                    ->select('kuliahpengganti.id_kp','jadwal.kelompok','kuliahpengganti.tanggal_pengganti','kuliahpengganti.jam_pengganti','matakuliah.kd_mtk','matakuliah.nama_mtk','matakuliah.sks_mtk','users.id_user','users.nama','lab.nama_lab','lab.kapasitas_lab')
                     ->where('kuliahpengganti.tanggal_pengganti','=', $tanggal_ini)
                     ->where('jadwal.tahunajaran','=', $tahun->tahunajaran)
                     ->where('jadwal.semester','=', $semester->semester)
@@ -293,7 +298,7 @@ class JadwalUserController extends Controller
         $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
 
         $matkul = Matakuliah::all();
-        $dosen  = Dosen::all();
+        $dosen  = User::select('*')->orderBy('nama')->where('jabatan','=', 'Dosen')->get();
         
         return view('User\kelaspengganti')
         ->with('matkul', $matkul)
@@ -375,7 +380,7 @@ class JadwalUserController extends Controller
         {
             $jadwal = Jadwal::select('id_jadwal')
                             ->where('kelompok','=', $kelompok)
-                            ->where('id_dosen', $dosen)
+                            ->where('id_user', $dosen)
                             ->where('id_mtk', $mtk)
                             ->where('tahunajaran', $tahun->tahunajaran)
                             ->where('semester', $semester->semester)
@@ -410,10 +415,12 @@ class JadwalUserController extends Controller
         $id         = $request->get('idmtk');
 
         $dosen  = DB::table('jadwal')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
-                    ->select('jadwal.id_dosen', 'dosen.nip_dosen','dosen.nama_dosen')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
+                    ->select('jadwal.id_user', 'users.id_user','users.nama')
                     ->where('jadwal.id_mtk','=',$id)
-                    ->groupBy('jadwal.id_dosen')
+                    ->where('jadwal.tahunajaran','=',$request->session()->get('tahunajaran'))
+                    ->where('jadwal.semester','=',$request->session()->get('semester'))
+                    ->groupBy('jadwal.id_user')
                     ->get();
 
         $sks    = Matakuliah::select('sks_mtk')->where('id_mtk','=',$id)->first();
@@ -430,11 +437,14 @@ class JadwalUserController extends Controller
         $iddosen    = $request->get('iddosen');
 
         $kelompok  = DB::table('jadwal')
-                    ->join('dosen', 'jadwal.id_dosen','=','dosen.id_dosen')
+                    ->join('users', 'jadwal.id_user','=','users.id_user')
                     ->select('jadwal.kelompok')
                     ->where('jadwal.id_mtk','=',$idmtk)
-                    ->where('jadwal.id_dosen','=',$iddosen)
+                    ->Where('jadwal.id_user','=',$iddosen)
+                    ->where('jadwal.tahunajaran','=',$request->session()->get('tahunajaran'))
+                    ->where('jadwal.semester','=',$request->session()->get('semester'))
                     ->get();
+
 
         return response()->json($kelompok);
     }

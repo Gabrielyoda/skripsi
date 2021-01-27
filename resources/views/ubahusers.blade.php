@@ -9,11 +9,11 @@
                 <div class="canvas-wrapper">
                     <form action="{{ Route('prosesubahusers') }}" method="post">
                         {{ csrf_field() }}
-                        <input type="hidden" name="oldnim" value="{{ $users -> nim }}" hidden>
+                        <input type="hidden" name="oldnim" value="{{ $users -> id_user }}" hidden>
                         
                         <div class="form-group">
                             <label class="text-muted">NIM :</label>
-                            <input type="text" name="nim" class="form-control" value="{{ $users -> nim }}">
+                            <input type="text" name="nim" class="form-control" value="{{ $users -> nim }}" required>
                         </div>
                         <div class="form-group">
                             <label class="text-muted">Nama :</label>

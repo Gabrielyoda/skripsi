@@ -10,10 +10,10 @@ class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
  
-    protected $primaryKey = 'nim';
+    protected $primaryKey = 'id_user';
 
     protected $fillable = [
-       'nim', 'nama', 'password', 'telepon', 'email', 'jabatan', 'foto'
+       'id_user','nim', 'nama', 'password', 'telepon', 'email', 'jabatan', 'foto'
     ];
 
     protected $time_stamp = false;

@@ -11,15 +11,7 @@
                         {{ csrf_field() }}
                         <div class="form-group">
                             <label class="text-muted">Nama Lab :</label>
-                            <select class="form-control" name="namaLab" required>
-                                @for($i = 1 ; $i <= 14 ; $i++)
-                                    @if($i < 10)
-                                        <option value="{{ 'Lab. Kom 0'.$i }}">Lab. Kom {{ "0".$i }}</option>
-                                    @else
-                                        <option value="{{ 'Lab. Kom '.$i }}">Lab. Kom {{ $i }}</option>
-                                    @endif
-                                @endfor
-                            </select>
+                            <input type="text" name="namaLab" class="form-control" placeholder='Lab. Kom 01' required>
                         </div>
                         <div class="form-group">
                             <label class="text-muted">Kapasitas Maksimum :</label>
