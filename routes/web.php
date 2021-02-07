@@ -100,9 +100,13 @@ Route::group(['prefix'=>'/admin'], function() {
     Route::get('/kelaspengganti/hapus/{id_jadwal}', 'PenggantiController@hapus')->name('hapuskelaspengganti');
 
     Route::get('/pinjamlab', 'PinjamLabController@index')->name('pinjamlab');
+    Route::get('/historypinjamlab', 'PinjamLabController@history')->name('history');
     Route::get('/pinjamlab/tambah', 'PinjamLabController@tambah')->name('tambahpinjamlab');
     Route::post('/pinjamlab/prosestambah', 'PinjamLabController@prosestambah')->name('prosestambahpinjamlab');
     Route::get('/pinjamlab/view/{id_pinjam}', 'PinjamLabController@view')->name('viewpinjamlab');
+    Route::post('/pinjamlab/prosesetuju', 'PinjamLabController@prosessetuju')->name('prosessetujupinjamlab');
+    Route::post('/pinjamlab/tolak', 'PinjamLabController@tolak')->name('tolakpinjamlab');
+
     Route::get('/pinjamlab/ubah/{id_pinjam}', 'PinjamLabController@ubah')->name('ubahpinjamlab');
     Route::post('/pinjamlab/prosesubah', 'PinjamLabController@prosesubah')->name('prosesubahpinjamlab');
     Route::get('/pinjamlab/hapus/{id_pinjam}', 'PinjamLabController@hapus')->name('hapuspinjamlab');

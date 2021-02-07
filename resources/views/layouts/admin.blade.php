@@ -733,6 +733,18 @@
             $('.modal-body').append('<h4 class="pb-4 m-0 text-center">-- Silahkan pilih <strong>Tanggal Kuliah Pengganti</strong> terlebih dahulu --</h4>');
         }
     });
+
+    $('#tampilModalJamAjar2').on('click', function () {
+        var tanggal = $('#fieldtanggal').val();
+
+        if(tanggal == "")
+        {
+            $('.isiHeaderJadwal').empty();
+            $('.isiJadwal').empty();
+            $('.modal-body').find('h4').remove();
+            $('.modal-body').append('<h4 class="pb-4 m-0 text-center">-- Silahkan pilih <strong>Tanggal Peminjaman</strong> terlebih dahulu --</h4>');
+        }
+    });
     
     $(document).on({
         mouseenter: function () {

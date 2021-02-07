@@ -62,16 +62,16 @@ class AuthController extends Controller
         //untuk get 1 record pake first
         // $user = User::where('nim', $request->input('nim'))->first();
         $user = User::select('id_user', 'nama','telepon','email','jabatan')->where('email', $request->input('email'))->first();
-
+        $str = "usr" .$user->id_user;
+        $id_user = $this->enkripsi($str);
         
-
         
         return response()->json([
             'success' => true,
             'message' => "Berhasil Login",
             'data' => 
             [
-                "id_user" => $user->id_user,
+                "id_user" => $id_user,
                 "nama" => $user->nama,
                 "telepon" => $user->telepon,
                 "email" => $user->email,
@@ -119,6 +119,16 @@ class AuthController extends Controller
         $dec=$aes->decrypt();
 
         return $dec;
+    }
+
+    function enkripsi($plaintext){
+        $inputText = $plaintext;
+         $inputKey = "abcdefghijuklmno0123456789012345";
+         $blockSize = 256;
+         $aes = new Prosesaes($inputText, $inputKey, $blockSize);
+         $enc = $aes->encrypt();
+
+         return $enc;
     }
 
     

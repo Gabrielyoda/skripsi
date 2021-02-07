@@ -21,12 +21,17 @@ Route::post('login', 'Api\AuthController@login');
 Route::post('register', 'Api\AuthController@register');
 Route::get('jadwal/lab', 'Api\ApiJadwalController@Lab');
 
+
+
 Route::get('pinjam', 'Api\ApiPinjamController@pinjam');
 Route::get('jadwal/matkul', 'Api\ApiJadwalController@matkul');
 Route::get('jadwal/matkuldosen', 'Api\ApiJadwalController@carimatkul');
 Route::get('jadwal/dosen', 'Api\ApiJadwalController@caridosen');
 Route::get('jadwal/kelompok', 'Api\ApiJadwalController@carikelompok');
 Route::get('jadwal/jam', 'Api\ApiJadwalController@cek_jam');
+Route::get('jadwal/cari_lab', 'Api\ApiJadwalController@cari_lab');
+Route::post('jadwal/dekripsikp', 'Api\ApiJadwalController@dekripsikp');
+Route::post('pinjam/dekripsipeminjaman', 'Api\ApiPinjamController@dekripsipeminjaman');
 
 
 Route::group(['middleware' => 'auth.jwt'], function () {
@@ -38,9 +43,9 @@ Route::get('user', 'Api\AuthController@getAuthUser');
 Route::get('jadwal/hari-ini', 'Api\ApiJadwalController@jadwal');
 Route::get('jadwal/jam-sekarang', 'Api\ApiJadwalController@jadwalJam');
 
-Route::post('jadwal/tambahkp', 'Api\ApiJadwalController@tambahkp')->name('test12345');
+Route::post('jadwal/enkripsikp', 'Api\ApiJadwalController@tambahkp')->name('test12345');
 Route::post('jadwal/tambahkpweb', 'Api\ApiJadwalController@tambahkpweb');
-Route::post('pinjam/tambah', 'Api\ApiPinjamController@prosestambah');
+Route::post('pinjam/enkripsipeminjaman', 'Api\ApiPinjamController@prosestambah');
 Route::post('pinjam/tambahweb', 'Api\ApiPinjamController@prosestambahweb');
 Route::get('pinjam/lihat', 'Api\ApiPinjamController@lihatpeminjaman');
 

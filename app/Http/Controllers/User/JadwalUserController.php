@@ -61,11 +61,12 @@ class JadwalUserController extends Controller
                             ->join('lab', 'lab.id_lab','=','pinjamlab.id_lab')
                             ->select('pinjamlab.jam_pinjam','pinjamlab.nama_pinjam','pinjamlab.judul_pinjam','lab.nama_lab')
                             ->where('pinjamlab.tanggal_pinjam','=', date('Y-m-d'))
+                            ->where('pinjamlab.status' , '=', 1)
                             ->get();
 
-                            for($i=0; $i<count($joinPinjam); $i++) {
-                                $joinPinjam[$i]->nama_pinjam = $this->dekripsi($joinPinjam[$i]->nama_pinjam);
-                            }
+                            // for($i=0; $i<count($joinPinjam); $i++) {
+                            //     $joinPinjam[$i]->nama_pinjam = $this->dekripsi($joinPinjam[$i]->nama_pinjam);
+                            // }
 
         $data   = array();
 
@@ -158,6 +159,7 @@ class JadwalUserController extends Controller
                             ->join('lab', 'lab.id_lab','=','pinjamlab.id_lab')
                             ->select('pinjamlab.jam_pinjam','pinjamlab.nama_pinjam','pinjamlab.judul_pinjam','lab.nama_lab')
                             ->where('pinjamlab.tanggal_pinjam','=', date('Y-m-d'))
+                            ->where('pinjamlab.status' , '=', 1)
                             ->get();
 
         $data   = array();
@@ -255,11 +257,12 @@ class JadwalUserController extends Controller
                         ->join('lab', 'lab.id_lab','=','pinjamlab.id_lab')
                         ->select('pinjamlab.jam_pinjam','pinjamlab.nama_pinjam','pinjamlab.judul_pinjam','lab.nama_lab')
                         ->where('pinjamlab.tanggal_pinjam','=', $tanggal_ini)
+                        ->where('pinjamlab.status' , '=', 1)
                         ->get();
 
-                        for($i=0; $i<count($joinPinjam); $i++) {
-                            $joinPinjam[$i]->nama_pinjam = $this->dekripsi($joinPinjam[$i]->nama_pinjam);
-                        }
+                        // for($i=0; $i<count($joinPinjam); $i++) {
+                        //     $joinPinjam[$i]->nama_pinjam = $this->dekripsi($joinPinjam[$i]->nama_pinjam);
+                        // }
 
         $data   = array();
         $jamMasuk   = array('06:15', '07:10', '08:00', '08:55', '09:45', '10:40', '11:35', '12:30', '13:25', '14:20', '15:15', '16:10', '17:05');
@@ -569,6 +572,7 @@ class JadwalUserController extends Controller
                         ->join('lab', 'lab.id_lab','=','pinjamlab.id_lab')
                         ->select('pinjamlab.jam_pinjam','pinjamlab.nama_pinjam','pinjamlab.judul_pinjam','lab.nama_lab')
                         ->where('pinjamlab.tanggal_pinjam','=', $tanggal)
+                        ->where('pinjamlab.status' , '=', 1)
                         ->get();
 
         $data   = array();

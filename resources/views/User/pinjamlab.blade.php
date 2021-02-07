@@ -88,18 +88,7 @@
                             </div>
                         </div>
 
-                        <div class="text-center mb-2">
-                            <button type="button" id="tampilModalJamAjar2" class="btn btn-primary" data-toggle="modal" data-target="#modalJamAjar">-- Pilih Lab --</button>
-                        </div>
-                         <div class="form-group">
-                            <label class="text-muted">Ruang Lab Yang Tersedia:</label>
-                            <div class="input-group mb-2">
-                                <div class="input-group-prepend">
-                                    <label class="input-group-text"><i class="fa fa-building-o"></i></label>
-                                </div>
-                                <input type="text" name="ruangLab" id="fieldlab" class="form-control text-dark" readonly required>
-                            </div>
-                        </div>
+                        
                         <div class="form-group">
                             <label class="text-muted">E-Mail yang dapat dihubungi :</label>
                             <div class="input-group mb-2">

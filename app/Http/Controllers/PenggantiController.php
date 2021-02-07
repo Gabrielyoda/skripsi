@@ -134,6 +134,7 @@ class PenggantiController extends Controller
         $cektanggal     = DB::table('pinjamlab')
                                 ->select('jam_pinjam')
                                 ->where('id_lab', '=', $lab)
+                                ->where('pinjamlab.status' , '=', 1)
                                 ->where('tanggal_pinjam', '=', $tanggal)
                                 ->get();
 

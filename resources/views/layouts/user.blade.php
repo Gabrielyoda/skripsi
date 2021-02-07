@@ -1006,7 +1006,7 @@
         var coba            = data.token;
        
         
-        console.log(data);
+        console.log(coba);
         $.ajax({
             url: "./api/jadwal/tambahkpweb",
             type: "POST",
@@ -1109,7 +1109,6 @@
             "jamMulai":data.jamMulai,
             "jamSelesai":data.jamSelesai,
             "keterangan":data.keterangan,
-            "lab":data.ruangLab,
             "id_user":data.id_user,
             "tanggal":data.tanggalKP,
             "nohp":data.nohp,
@@ -1118,7 +1117,7 @@
         dataType: "json",
 
         success: function(data){
-            alert("Sukses Menambahkan Peminjaman Lab");
+            alert("Sukses Mengajukan Peminjaman Lab");
             
             window.location.href = "homeuser";
             console.log(sessionStorage.getItem("nim"));

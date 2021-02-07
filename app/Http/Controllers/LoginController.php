@@ -34,12 +34,9 @@ class LoginController extends Controller
 
         $jwt_token = null;
  
-        // if (!$jwt_token = JWTAuth::attempt($credentials)) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Invalid email or Password',
-        //     ], 401);
-        // }
+        if (!$jwt_token = JWTAuth::attempt($credentials)) {
+            return back()->with('error', 'Email atau Kata Sandi salah');
+        }
         
         $cekemail = User::where('email','=',$email)->first();
         if($cekemail)

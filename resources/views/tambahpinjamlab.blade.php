@@ -23,7 +23,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="text-muted">Keterangan Pinjam :</label>
+                            <label class="text-muted">Spesifikasi Lab Yang Dibutuhkan :</label>
                             <div class="input-group mb-2">
                                 <textarea class="form-control" name="keterangan" rows="3" required></textarea>
                             </div>
@@ -72,6 +72,20 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="text-center mb-2">
+                            <button type="button" id="tampilModalJamAjar2" class="btn btn-primary" data-toggle="modal" data-target="#modalJamAjar">-- Pilih Lab --</button>
+                        </div>
+                         <div class="form-group">
+                            <label class="text-muted">Ruang Lab Yang Tersedia:</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text"><i class="fa fa-building-o"></i></label>
+                                </div>
+                                <input type="text" name="ruangLab" id="fieldlab" class="form-control text-dark" readonly required>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label class="text-muted">E-Mail yang dapat dihubungi :</label>
                             <div class="input-group mb-2">
@@ -85,14 +99,8 @@
                                 <input type="hidden" name="id_user" id="id_user" value="{{$id_user}}" readonly >
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="text-muted">Ruang lab yang digunakan :</label>
-                            <select class="form-control" name="lab" required>
-                                @foreach ($lab as $labs)
-                                    <option value="{{ $labs -> id_lab }}">{{ $labs -> nama_lab }} - {{ $labs -> kapasitas_lab." Mahasiswa" }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                    
+                        
                         <div class="text-center">
                             <div class="btn-group">
                                 <button type="submit" name="simpan" class="btn btn-info pt-3 pb-3 pl-5 pr-5"><i class="fa fa-save fa-lg"></i> Simpan</button>
@@ -101,6 +109,41 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Lab Tersedia -->
+<div class="modal fade" id="modalLabTersedia">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Pilih Ruang Lab</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalJamAjar">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Pilih Jam Ajar dan Ruang Lab</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <table class="table table-bordered tabelUser text-center">
+                    <tr class="isiHeaderJadwal"></tr>
+                    <tbody class="isiJadwal border-0"></tbody>
+                </table>
             </div>
         </div>
     </div>

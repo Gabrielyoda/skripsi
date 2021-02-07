@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Validator;
 use App\Aes256\Prosesaes;
+use App\User;
 
 class ApiJadwalController extends Controller
 {
@@ -58,6 +59,7 @@ class ApiJadwalController extends Controller
                     ->join('lab', 'lab.id_lab','=','pinjamlab.id_lab')
                     ->select(DB::raw('pinjamlab.jam_pinjam as jam_ajar'),DB::raw('pinjamlab.nama_pinjam as nama'),DB::raw('pinjamlab.judul_pinjam as nama_mtk'),'lab.nama_lab',DB::raw('pinjamlab.id_pinjam as kelompok'))
                     ->where('pinjamlab.tanggal_pinjam','=', $tanggal)
+                    ->where('pinjamlab.status' , '=', 1)
                     ->get()
                     ->toArray();
 
@@ -150,6 +152,272 @@ class ApiJadwalController extends Controller
 
     }
 
+    function cari_lab(Request $request)
+    { 
+        
+        $validator = Validator::make($request->all(), [
+            'tanggal' => 'required',
+            'jam_ajar'=> 'required'
+           
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
+            
+            $keterangan     = $request->keterangan;
+            $tanggalPinjam  = $request->tanggal;
+            $jamAjar        = $request->jam_ajar;
+
+            $tanggal    = $this->caritanggal($tanggalPinjam);
+            $hari       = $this->carihari($tanggal);
+
+            
+
+            $cek = 0;
+
+
+        $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
+        $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
+        $lab    = Lab::select('*')->orderBy('nama_lab')->get();
+        $labApi = $lab;
+
+        $cek = 0;
+        $jamAjarMasuk    = substr($jamAjar, 0, -8);  
+        $jamAjarKeluar   = substr($jamAjar, -5);
+
+       
+
+        //pengecekan jadwal
+        $cekwaktu       = Jadwal::select('jam_ajar','id_lab')    ->where('hari', $hari)
+                                                        ->where('semester', $semester->semester)
+                                                        ->where('tahunajaran', $tahun->tahunajaran)
+                                                        ->get();
+
+        
+
+        if(count($cekwaktu)!=0){
+            foreach($cekwaktu as $cekwaktus) 
+            {
+                //ini untuk mengecek jadwal bentrok
+                for($i=0;$i<count($cekwaktu);$i++){
+                $jamMasuk[$i]   = substr($cekwaktu[$i] -> jam_ajar, 0, -8);
+                $jamKeluar[$i]  = substr($cekwaktu[$i] -> jam_ajar, -5);
+                }
+                
+               
+                $lab2[] = array();
+                $j=0;
+                for($i=0;$i<count($cekwaktu);$i++){
+                    if($jamKeluar[$i] >= $jamAjarMasuk && $jamMasuk[$i] <= $jamAjarKeluar) {
+                        $lab2[$j] = $cekwaktu[$i]-> id_lab;
+                        $j++;
+                    }
+                    else{
+                        
+                    }
+                }
+               
+              
+                
+            }
+
+            $k=0;
+            for($i=0;$i<count($lab);$i++){
+                for($j=0;$j<count($lab2);$j++){
+                    if($lab[$i] -> id_lab == $lab2[$j]){
+                        if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                            $lab[$i] -> nama_lab = "Lab Bentrok";
+                        }
+                    
+                    }
+
+                }
+            }
+
+            $lab3 = array();
+
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $k++;
+                }
+            }
+            
+            
+        }
+        else{
+            $k=0;
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $k++;
+                }
+            }
+        }
+        
+       
+        
+        //pengecekan kp
+        $cektanggal     = DB::table('jadwal')
+                            ->join('kuliahpengganti', 'jadwal.id_jadwal','=','kuliahpengganti.id_jadwal')
+                            ->select('kuliahpengganti.jam_pengganti','kuliahpengganti.id_lab')
+                            ->where('kuliahpengganti.tanggal_pengganti', '=', $tanggal)
+                            ->where('jadwal.tahunajaran','=',$tahun->tahunajaran)
+                            ->where('jadwal.semester','=',$semester->semester)
+                            ->get();
+
+
+        if(count($cektanggal)!=0){
+            foreach($cektanggal as $cektanggals) 
+            {
+               
+               
+                
+                for($i=0;$i<count($cektanggal);$i++){
+                    $jamMasuk[$i]    = substr($cektanggal[$i] -> jam_pengganti, 0, -8);
+                    $jamKeluar[$i]   = substr($cektanggal[$i] -> jam_pengganti, -5);
+                }
+
+                
+                $j=0;
+                for($i=0;$i<count($cektanggal);$i++){
+                    if($jamKeluar[$i] >= $jamAjarMasuk && $jamMasuk[$i] <= $jamAjarKeluar) {
+                        $lab2[$j] = $cektanggal[$i]-> id_lab;
+                        $j++;
+                    }
+                    else{
+                        
+                    }
+                }
+                
+            }
+
+           
+
+            for($i=0;$i<count($lab);$i++){
+                for($j=0;$j<count($lab2);$j++){
+                    if($lab[$i] -> id_lab == $lab2[$j]){
+                        if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                            $lab[$i] -> nama_lab = "Lab Bentrok";
+                        }
+                    
+                    }
+
+                }
+            }
+
+            $lab3 = array();
+            $k=0;
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $k++;
+                }
+            }
+        }
+        else{
+            $k=0;
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $k++;
+                }
+            }
+        }
+
+        //pengecekan peminjaman
+        $cektanggal     = DB::table('pinjamlab')
+                                                    ->select('jam_pinjam' ,'id_lab')
+                                                    ->where('status', '=', 1)
+                                                    ->where('tanggal_pinjam', '=', $tanggal)
+                                                    ->get();
+
+        
+        if(count($cektanggal)!=0){
+            foreach($cektanggal as $cektanggals) 
+            {
+                for($i=0;$i<count($cektanggal);$i++){
+                    $jamMasuk[$i]    = substr($cektanggal[$i] -> jam_pinjam, 0, -8);
+                    $jamKeluar[$i]   = substr($cektanggal[$i] -> jam_pinjam, -5);
+                }
+
+                $j=0;
+                for($i=0;$i<count($cektanggal);$i++){
+                    if($jamKeluar[$i] >= $jamAjarMasuk && $jamMasuk[$i] <= $jamAjarKeluar) {
+                        $lab2[$j] = $cektanggal[$i]-> id_lab;
+                        $j++;
+                    }
+                    else{
+                       
+                    }
+                }
+
+            }
+
+            
+            for($i=0;$i<count($lab);$i++){
+                for($j=0;$j<count($lab2);$j++){
+                    if($lab[$i] -> id_lab == $lab2[$j]){
+                        if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                            $lab[$i] -> nama_lab = "Lab Bentrok";
+                        }
+                    
+                    }
+
+                }
+            }
+
+            $lab3 = array();
+            $k=0;
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $k++;
+                }
+            }
+        }
+        else{
+            $k=0;
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $k++;
+                }
+            }
+        }
+
+        $k=0;
+        $labApi = array();
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $labApi[$k] = array(
+                    "id_lab"=>  $lab[$i] -> id_lab,
+                    "nama_lab"=> $lab[$i] -> nama_lab
+                );
+                    $k++;
+                }
+            }
+
+        if(count($labApi)==0){
+            $labApi[$k] = array(
+                "id_lab"=>  999,
+                "nama_lab"=> "Tidak Ada Lab Yang tersedia"
+            );
+        }
+
+
+        return response()->json([
+            'error' => false,
+            'data' => $labApi
+        ]);
+
+
+       
+
+    }
+
     public function matkul(){
 
         $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
@@ -190,6 +458,11 @@ class ApiJadwalController extends Controller
 
         $sks    = Matakuliah::select('sks_mtk')->where('id_mtk','=',$id)->first();
 
+        for($i=0; $i<count($dosen); $i++) {
+            $str = "usr" .$dosen[$i]->id_user;
+            $dosen[$i]->id_user = $this->enkripsi($str);
+        }
+
         return response()->json([
             'error' => false,
             'data' => $dosen
@@ -199,7 +472,8 @@ class ApiJadwalController extends Controller
     function cariMatkul(Request $request)
     {   
         $id         = $request->get('iddosen');
-
+        $id_user    = $this->dekripsi($id);
+        $id         = substr($id_user, 3);
         $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
         $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
 
@@ -235,6 +509,8 @@ class ApiJadwalController extends Controller
     {   
         $idmtk      = $request->get('idmtk');
         $iddosen    = $request->get('iddosen');
+        $id_user    = $this->dekripsi($iddosen);
+        $iddosen    = substr($id_user, 3);
 
         $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
         $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
@@ -311,7 +587,8 @@ class ApiJadwalController extends Controller
                                                         ->where('tahunajaran', $tahun->tahunajaran)
                                                         ->get();
 
-                                                        
+                       
+                                                    
         
         $cek = 0;
 
@@ -381,11 +658,24 @@ class ApiJadwalController extends Controller
            
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json([
+                'succes' => false,
+                'message' => $validator->errors()
+            ]
+            );
+        }
+        $mtk        = $request->id_matkul;
+        if($mtk == 0){
+            return response()->json([
+                'success' => false,
+                'message' => 'Kuliah Pengganti tidak Dapat disimpan'
+            ]); 
         }
 
         $mtk        = $request->id_matkul;
         $dosen      = $request->id_dosen;
+        $id_user    = $this->dekripsi($dosen);
+        $dosen      = substr($id_user, 3);
         $kelompok   = strtoupper($request->kelompok);
         $lab        = $request->lab;
         $tanggalkp  = $request->tanggal;
@@ -442,6 +732,7 @@ class ApiJadwalController extends Controller
                                 ->select('jam_pinjam')
                                 ->where('id_lab', '=', $lab)
                                 ->where('tanggal_pinjam', '=', $tanggal)
+                                ->where('pinjamlab.status' , '=', 1)
                                 ->get();
 
                
@@ -456,7 +747,7 @@ class ApiJadwalController extends Controller
                         }
             }
 
-        
+        //ini proses untuk menyimpan data ke db
         if($cek == 0)
         {
             $jadwal = Jadwal::select('id_jadwal')
@@ -467,16 +758,99 @@ class ApiJadwalController extends Controller
                             ->where('tahunajaran', $tahun->tahunajaran)
                             ->first();
 
-                            
+            //menambah kan str untuk meminalkan eror
+            $jamAjar = "enc" .$jamAjar;
+            $tanggal = "enc" .$tanggal;
+            $lab     = "enc" .$lab;
+            $id_jadwal = "enc" .$jadwal->id_jadwal;
+            //proses enkripsi
+            $jamAjar = $this->enkripsi($jamAjar);
+            $tanggal = $this->enkripsi($tanggal);
+            $lab     = $this->enkripsi($lab);
+            $id_jadwal = $this->enkripsi($id_jadwal);
 
-            $kp    = new KuliahPengganti();
+            $data[] = array(
+                "id_jadwal"=>  $id_jadwal,
+                "lab"=> $lab,
+                "tanggal" => $tanggal,
+                "jamAjar" => $jamAjar
+            );
             
-            $kp     -> jam_Pengganti        = $jamAjar;
-            $kp     -> tanggal_Pengganti    = $tanggal;
-            $kp     -> id_lab               = $lab;
-            $kp     -> id_jadwal            = $jadwal -> id_jadwal;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data Kuliah Pengganti Telah dienkripsi',
+                "id_jadwal"=>  $id_jadwal,
+                "lab"=> $lab,
+                "tanggal" => $tanggal,
+                "jamAjar" => $jamAjar
+            ]);          
+        }
+            else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kuliah pengganti anda bentrok dengan jadwal yang ada'
+                ]);
             
-           if($kp->save()){
+            } 
+    }
+
+    function dekripsikp(Request $request)
+    {
+        $tahun      = TahunAjaran::select('tahunajaran')->where('status_tahunajaran','=','1')->first();
+        $semester   = Semester::select('semester')->where('status_semester','=','1')->first();
+
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'id_jadwal' => 'required',
+            'id_lab' => 'required',
+            'jamAjar' => 'required',
+            'tanggal' => 'required'
+           
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'succes' => false,
+                'message' => $validator->errors()
+            ]
+            );
+        }
+
+        //ini mendapatkan data
+        $id_user     = $request->id_user;
+        $id_jadwal     = $request->id_jadwal;
+        $id_lab     = $request->id_lab;
+        $jamAjar     = $request->jamAjar;
+        $tanggal     = $request->tanggal;
+
+        //proses dekripsi
+        $id_user    = $this->dekripsi($id_user);
+        $id_user    = substr($id_user, 3);
+        $id_jadwal  = $this->dekripsi($id_jadwal);
+        $id_jadwal  = substr($id_jadwal, 3);
+        $id_lab     = $this->dekripsi($id_lab);
+        $id_lab     = substr($id_lab, 3);
+        $jamAjar     = $this->dekripsi($jamAjar);
+        $jamAjar     = substr($jamAjar, 3);
+        $tanggal     = $this->dekripsi($tanggal);
+        $tanggal     = substr($tanggal, 3);
+
+        
+
+        $user = User::select('nama')->where('id_user', $id_user)->get();
+
+       
+        if(count($user)==1){
+        $kp    = new KuliahPengganti();
+        
+        $kp     -> jam_Pengganti        = $jamAjar;
+        $kp     -> tanggal_Pengganti    = $tanggal;
+        $kp     -> id_lab               = $id_lab;
+        $kp     -> id_jadwal            = $id_jadwal;
+
+
+        
+            if($kp->save()){
             return response()->json([
                 'success' => true,
                 'message' => 'data berhasil disimpan'
@@ -488,14 +862,7 @@ class ApiJadwalController extends Controller
                         'message' => 'Peminjaman lab anda bentrok dengan jadwal yang ada'
                     ]);
             }
-        }
-            else{
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Peminjaman lab anda bentrok dengan jadwal yang ada'
-                ]);
-            
-            } 
+        }     
     }
 
     function tambahkpweb(Request $request)
@@ -816,5 +1183,15 @@ class ApiJadwalController extends Controller
         $dec=$aes->decrypt();
 
         return $dec;
+    }
+
+    function enkripsi($plaintext){
+        $inputText = $plaintext;
+         $inputKey = "abcdefghijuklmno0123456789012345";
+         $blockSize = 256;
+         $aes = new Prosesaes($inputText, $inputKey, $blockSize);
+         $enc = $aes->encrypt();
+
+         return $enc;
     }
 }

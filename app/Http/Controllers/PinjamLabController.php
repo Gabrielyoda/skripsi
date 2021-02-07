@@ -22,13 +22,13 @@ class PinjamLabController extends Controller{
         $nama = $user -> nama;
 
         $join   = DB::table('pinjamlab')
-                    ->join('lab', 'pinjamlab.id_lab','=','lab.id_lab')
-                    ->select('pinjamlab.id_pinjam','pinjamlab.jam_pinjam','pinjamlab.tanggal_pinjam','pinjamlab.nama_pinjam','pinjamlab.judul_pinjam','pinjamlab.keterangan_pinjam','pinjamlab.email_pinjam','lab.nama_lab','lab.kapasitas_lab')
+                    ->where('pinjamlab.status' , '=', 0)
+                    ->select('pinjamlab.id_pinjam','pinjamlab.jam_pinjam','pinjamlab.tanggal_pinjam','pinjamlab.nama_pinjam','pinjamlab.judul_pinjam','pinjamlab.keterangan_pinjam','pinjamlab.email_pinjam')
                     ->get();
 
-                    for($i=0; $i<count($join); $i++) {
-                        $join[$i]->nama_pinjam = $this->dekripsi($join[$i]->nama_pinjam);
-                    }
+                    // for($i=0; $i<count($join); $i++) {
+                    //     $join[$i]->nama_pinjam = $this->dekripsi($join[$i]->nama_pinjam);
+                    // }
 
         return view('pinjamlab')
         ->with('join', $join)
@@ -36,6 +36,31 @@ class PinjamLabController extends Controller{
         ->with('semester', $request->session()->get('semester'))
         ->with('tahunajaran', $request->session()->get('tahunajaran'))
         ->with('title', 'Pinjam Lab');
+    }
+
+    function history(Request $request){
+        $user = User::find($request->session()->get('nim'));
+
+        $nama = $user -> nama;
+
+        $join   = DB::table('pinjamlab')
+                    ->join('lab', 'pinjamlab.id_lab','=','lab.id_lab')
+                    ->where('pinjamlab.status' , '=', 1)
+                    ->orWhere('pinjamlab.status','=', 2)
+                    ->select('pinjamlab.id_pinjam','pinjamlab.jam_pinjam','pinjamlab.tanggal_pinjam','pinjamlab.nama_pinjam','pinjamlab.judul_pinjam','pinjamlab.keterangan_pinjam','pinjamlab.email_pinjam','lab.nama_lab','lab.kapasitas_lab','pinjamlab.status')
+                    ->orderBy('pinjamlab.tanggal_pinjam' , 'desc')
+                    ->get();
+        
+                    // for($i=0; $i<count($join); $i++) {
+                    //     $join[$i]->nama_pinjam = $this->dekripsi($join[$i]->nama_pinjam);
+                    // }
+
+        return view('historypeminjaman')
+        ->with('join', $join)
+        ->with('nama', $nama)
+        ->with('semester', $request->session()->get('semester'))
+        ->with('tahunajaran', $request->session()->get('tahunajaran'))
+        ->with('title', 'History Peminjaman Lab');
     }
 
     function tambah(Request $request)
@@ -65,10 +90,13 @@ class PinjamLabController extends Controller{
             $tanggalPinjam  = $request->get('tanggal');
             $jamMulai       = $request->get('jamMulai');
             $jamSelesai     = $request->get('jamSelesai');
-            $ruangLab       = $request->get('lab');
+            $cariLab        = Lab::select('id_lab')->where('nama_lab', $request->get('ruangLab'))->first();
+            $ruangLab       = $cariLab->id_lab;
             $email          = $request->get('email');
             $nohp           = $request->get('nohp');
             $id_user        = $request->get('id_user');
+            $status         = 1;
+            $comment        = "Dibuat oleh Admin";
 
            
 
@@ -134,21 +162,23 @@ class PinjamLabController extends Controller{
                         }
             }
 
-            $nama_baru = $this->enkripsi($nama);
-            $keterangan_baru = $this->enkripsi($keterangan);
-            $email_baru = $this->enkripsi($email);
+            // $nama_baru = $this->enkripsi($nama);
+            // $keterangan_baru = $this->enkripsi($keterangan);
+            // $email_baru = $this->enkripsi($email);
 
             if($cek == 0){
             $pinjam  =  new PinjamLab();
             $pinjam  -> jam_pinjam          = $jamMulai.' - '.$jamSelesai;
             $pinjam  -> tanggal_pinjam      = $this->caritanggal($tanggalPinjam);
-            $pinjam  -> nama_pinjam         = $nama_baru;
+            $pinjam  -> nama_pinjam         = $nama;
             $pinjam  -> judul_pinjam        = $judul;
-            $pinjam  -> keterangan_pinjam   = $keterangan_baru;
-            $pinjam  -> email_pinjam        = $email_baru;
+            $pinjam  -> keterangan_pinjam   = $keterangan;
+            $pinjam  -> email_pinjam        = $email;
             $pinjam  -> id_lab              = $ruangLab;
             $pinjam  -> nohp                = $nohp;
             $pinjam  -> id_user             = $id_user;
+            $pinjam  -> status              = $status;
+            $pinjam  -> comment             = $comment;
 
                 
                     
@@ -180,9 +210,9 @@ class PinjamLabController extends Controller{
 
         $pinjam  = PinjamLab::find($id);
 
-        $pinjam->nama_pinjam = $this->dekripsi($pinjam->nama_pinjam);
-        $pinjam->keterangan_pinjam = $this->dekripsi($pinjam->keterangan_pinjam);
-        $pinjam->email_pinjam = $this->dekripsi($pinjam->email_pinjam);
+        // $pinjam->nama_pinjam = $this->dekripsi($pinjam->nama_pinjam);
+        // $pinjam->keterangan_pinjam = $this->dekripsi($pinjam->keterangan_pinjam);
+        // $pinjam->email_pinjam = $this->dekripsi($pinjam->email_pinjam);
 
         // Fungsi mengubah date yyyy-mm-dd ke dd-MM-yyyy atau format Indonesia
         $pinjam->tanggal_pinjam = $this->cektanggal($pinjam->tanggal_pinjam);
@@ -209,18 +239,232 @@ class PinjamLabController extends Controller{
 
         $pinjam  = PinjamLab::find($id);
 
-        $pinjam->nama_pinjam = $this->dekripsi($pinjam->nama_pinjam);
-        $pinjam->keterangan_pinjam = $this->dekripsi($pinjam->keterangan_pinjam);
-        $pinjam->email_pinjam = $this->dekripsi($pinjam->email_pinjam);
+        // $pinjam->nama_pinjam = $this->dekripsi($pinjam->nama_pinjam);
+        // $pinjam->keterangan_pinjam = $this->dekripsi($pinjam->keterangan_pinjam);
+        // $pinjam->email_pinjam = $this->dekripsi($pinjam->email_pinjam);
 
+        
+        $tanggal = $pinjam->tanggal_pinjam;
+        $hari       = $this->carihari($tanggal);
         // Fungsi mengubah date yyyy-mm-dd ke dd-MM-yyyy atau format Indonesia
         $pinjam->tanggal_pinjam = $this->cektanggal($pinjam->tanggal_pinjam);
+
         
         $lab    = Lab::select('*')->orderBy('nama_lab')->get();
+        $labApi = $lab;
 
+        $jamAjar = $pinjam->jam_pinjam;
+        $cek = 0;
+        $jamAjarMasuk    = substr($jamAjar, 0, -8);  
+        $jamAjarKeluar   = substr($jamAjar, -5);
+
+        //pengecekan jadwal
+        $cekwaktu       = Jadwal::select('jam_ajar','id_lab','kelompok')    ->where('hari', $hari)
+                                                        ->where('semester', $request->session()->get('semester'))
+                                                        ->where('tahunajaran', $request->session()->get('tahunajaran'))
+                                                        ->get();
+
+       
+
+        if(count($cekwaktu)!=0){
+            foreach($cekwaktu as $cekwaktus) 
+            {
+                //ini untuk mengecek jadwal bentrok
+                for($i=0;$i<count($cekwaktu);$i++){
+                $jamMasuk[$i]   = substr($cekwaktu[$i] -> jam_ajar, 0, -8);
+                $jamKeluar[$i]  = substr($cekwaktu[$i] -> jam_ajar, -5);
+                }
+                
+               
+                $lab2[] = array();
+                $j=0;
+                for($i=0;$i<count($cekwaktu);$i++){
+                    if($jamKeluar[$i] >= $jamAjarMasuk && $jamMasuk[$i] <= $jamAjarKeluar) {
+                        $lab2[$j] = $cekwaktu[$i]-> id_lab;
+                        $j++;
+                    }
+                    else{
+                        
+                    }
+                }
+               
+              
+                
+            }
+
+            $k=0;
+            for($i=0;$i<count($lab);$i++){
+                for($j=0;$j<count($lab2);$j++){
+                    if($lab[$i] -> id_lab == $lab2[$j]){
+                        if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                            $lab[$i] -> nama_lab = "Lab Bentrok";
+                        }
+                    
+                    }
+
+                }
+            }
+
+            $lab3 = array();
+
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $k++;
+                }
+            }
+            
+            
+        }
+        else{
+            $k=0;
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $k++;
+                }
+            }
+        }
+        
+       
+        
+        //pengecekan kp
+        $cektanggal     = DB::table('jadwal')
+                            ->join('kuliahpengganti', 'jadwal.id_jadwal','=','kuliahpengganti.id_jadwal')
+                            ->select('kuliahpengganti.jam_pengganti','kuliahpengganti.id_lab')
+                            ->where('kuliahpengganti.tanggal_pengganti', '=', $tanggal)
+                            ->where('jadwal.tahunajaran','=',$request->session()->get('tahunajaran'))
+                            ->where('jadwal.semester','=',$request->session()->get('semester'))
+                            ->get();
+
+                           
+
+
+        if(count($cektanggal)!=0){
+            foreach($cektanggal as $cektanggals) 
+            {
+               
+               
+                
+                for($i=0;$i<count($cektanggal);$i++){
+                    $jamMasuk[$i]    = substr($cektanggal[$i] -> jam_pengganti, 0, -8);
+                    $jamKeluar[$i]   = substr($cektanggal[$i] -> jam_pengganti, -5);
+                }
+
+                
+                $j=0;
+                for($i=0;$i<count($cektanggal);$i++){
+                    if($jamKeluar[$i] >= $jamAjarMasuk && $jamMasuk[$i] <= $jamAjarKeluar) {
+                        $lab2[$j] = $cektanggal[$i]-> id_lab;
+                        $j++;
+                    }
+                    else{
+                        
+                    }
+                }
+                
+            }
+
+           
+
+            for($i=0;$i<count($lab);$i++){
+                for($j=0;$j<count($lab2);$j++){
+                    if($lab[$i] -> id_lab == $lab2[$j]){
+                        if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                            $lab[$i] -> nama_lab = "Lab Bentrok";
+                        }
+                    
+                    }
+
+                }
+            }
+
+            $lab3 = array();
+            $k=0;
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $k++;
+                }
+            }
+        }
+        else{
+            $k=0;
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $k++;
+                }
+            }
+        }
+
+      
+
+        //pengecekan peminjaman
+        $cektanggal     = DB::table('pinjamlab')
+                                                    ->select('jam_pinjam' ,'id_lab')
+                                                    ->where('status', '=', 1)
+                                                    ->where('tanggal_pinjam', '=', $tanggal)
+                                                    ->get();
+
+        
+        if(count($cektanggal)!=0){
+            foreach($cektanggal as $cektanggals) 
+            {
+                for($i=0;$i<count($cektanggal);$i++){
+                    $jamMasuk[$i]    = substr($cektanggal[$i] -> jam_pinjam, 0, -8);
+                    $jamKeluar[$i]   = substr($cektanggal[$i] -> jam_pinjam, -5);
+                }
+
+                $j=0;
+                for($i=0;$i<count($cektanggal);$i++){
+                    if($jamKeluar[$i] >= $jamAjarMasuk && $jamMasuk[$i] <= $jamAjarKeluar) {
+                        $lab2[$j] = $cektanggal[$i]-> id_lab;
+                        $j++;
+                    }
+                    else{
+                       
+                    }
+                }
+
+            }
+
+            
+            for($i=0;$i<count($lab);$i++){
+                for($j=0;$j<count($lab2);$j++){
+                    if($lab[$i] -> id_lab == $lab2[$j]){
+                        if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                            $lab[$i] -> nama_lab = "Lab Bentrok";
+                        }
+                    
+                    }
+
+                }
+            }
+
+            $lab3 = array();
+            $k=0;
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $k++;
+                }
+            }
+        }
+        else{
+            $k=0;
+            for($i=0;$i<count($lab);$i++){
+                if($lab[$i] -> nama_lab != "Lab Bentrok"){
+                    $lab3[$k] = $lab[$i] -> nama_lab;
+                    $k++;
+                }
+            }
+        }
+
+      
         return view('viewpinjamlab')
         ->with('pinjam', $pinjam)
-        ->with('lab', $lab)
+        ->with('lab', $lab3)
         ->with('nama', $nama)
         ->with('id_user', $id_user)
         ->with('semester', $request->session()->get('semester'))
@@ -229,9 +473,69 @@ class PinjamLabController extends Controller{
 
     }
 
+    function prosessetuju(Request $request)
+    {
+        $id             = $request->get('id');
+        $status         = 1;
+        $comment        = $request->get('comment');
+        $cariLab        = Lab::select('id_lab')->where('nama_lab', $request->get('lab'))->first();
+        $ruangLab       = $cariLab->id_lab;
+
+       
+
+       
+        $pinjam  =  PinjamLab::find($id);
+        $pinjam  -> status              = $status;
+        $pinjam  -> comment             = $comment;
+        $pinjam  -> id_lab              = $ruangLab;
+        
+
+
+            
+                
+            if($pinjam->save())
+            {
+                alert()->html('Berhasil Menyetujui Data', 'Peminjaman Lab  Berhasil Disetujui', 'success')->autoClose(10000);
+                return redirect('/admin/pinjamlab');
+            }
+            else
+            {
+            alert()->html('Gagal Menambah Data!', 'Mohon periksa kembali kesesuaian inputan Anda.', 'error')->autoClose(10000);
+            return redirect('/admin/pinjamlab/ubah/'.$id);
+            }
+        
+    }
+
+    function tolak(Request $request)
+    {
+        $id             = $request->get('id');
+        $status         = 2;
+        $comment        = $request->get('comment');
+        $ruangLab       = 0;
+        
+        $pinjam  =  PinjamLab::find($id);
+        $pinjam  -> status              = $status;
+        $pinjam  -> comment             = $comment;
+        $pinjam  -> id_lab              = $ruangLab;
+
+
+            
+                
+            if($pinjam->save())
+            {
+                alert()->html('Data peminjaman Telah ditolak', 'Peminjaman Lab  Berhasil Disetujui', 'success')->autoClose(10000);
+                return redirect('/admin/pinjamlab');
+            }
+            else
+            {
+            alert()->html('Gagal Menambah Data!', 'Mohon periksa kembali kesesuaian inputan Anda.', 'error')->autoClose(10000);
+            }
+        
+    }
+
     function prosesubah(Request $request)
     {
-        $id         = $request->get('id');
+        $id             = $request->get('id');
         $nama           = $request->get('nama');
         $judul          = $request->get('judul');
         $keterangan     = $request->get('keterangan');
@@ -287,9 +591,9 @@ class PinjamLabController extends Controller{
             }
         }
 
-        $nama_baru = $this->enkripsi($nama);
-        $keterangan_baru = $this->enkripsi($keterangan);
-        $email_baru = $this->enkripsi($email);
+        // $nama_baru = $this->enkripsi($nama);
+        // $keterangan_baru = $this->enkripsi($keterangan);
+        // $email_baru = $this->enkripsi($email);
 
         if($cek == 0){
         $pinjam  =  PinjamLab::find($id);
