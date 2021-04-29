@@ -1,6 +1,21 @@
 @extends('layouts.admin')
 @section('content')
 
+{{-- notifikasi form validasi --}}
+		@if ($errors->has('file'))
+		<span class="invalid-feedback" role="alert">
+			<strong>{{ $errors->first('file') }}</strong>
+		</span>
+		@endif
+ 
+		{{-- notifikasi sukses --}}
+		@if ($sukses = Session::get('sukses'))
+		<div class="alert alert-success alert-block">
+			<button type="button" class="close" data-dismiss="alert">×</button> 
+			<strong>{{ $sukses }}</strong>
+		</div>
+		@endif
+
 <div class="row">
     <div class="col-md-12" style="margin-bottom:20px;">
         <div class="card mb-5">
@@ -10,7 +25,8 @@
                 <hr>
                 <div class="canvas-wrapper">
                     <div class="text-center">
-                        <a class="btn btn-info btn-lg w-100 mb-3 mt-1" href="{{ Route('tambahjadwal') }}"><i class="fa fa-plus fa-lg"></i> Tambah Data</a>
+                        <a class="btn btn-info btn-lg w-300 mb-3 mt-1" href="{{ Route('tambahjadwal') }}"><i class="fa fa-plus fa-lg"></i> Tambah Data</a>
+                        <a class="btn btn-info btn-lg w-300 mb-3 mt-1 text-white" data-toggle="modal" data-target="#exampleModalFile"><i class="fa fa-edit fa-lg"></i>Import</a>
                     </div>
                     <div class="table-responsive-lg">
 						<table class="table table-hover table-bordered">
@@ -52,10 +68,46 @@
                                 @endforeach
 							</tbody>
 						</table>
+
+                        <div class="modal fade " id="exampleModalFile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <form action="{{ Route('import') }}" method="post" enctype="multipart/form-data">
+                                {{ csrf_field() }}
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Import Data Jadwal</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-3 form-group">
+                                        <label>Pilih file excel</label>
+                                        </div>
+                                        <div class="col-md-9 form-group">
+                                            <input type="file" name="file" required="required">
+                                        </div>
+                                        
+                                </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary" value="simpan">Import Data</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 					</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
 @endsection

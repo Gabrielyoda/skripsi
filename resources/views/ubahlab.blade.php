@@ -23,6 +23,10 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <label class="text-muted">Spesifikasi :</label>
+                            <input type="text" name="spesifikasi" class="form-control" value="{{ $lab -> spesifikasi}}" required>
+                        </div>
+                        <div class="form-group">
                             <label class="text-muted">Kapasitas Maksimum :</label>
                             <input type="number" name="kapasitasLab" class="form-control" value="{{ $lab -> kapasitas_lab }}" required>
                         </div>

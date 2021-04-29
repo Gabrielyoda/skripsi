@@ -14,6 +14,6 @@ class Jadwal extends Model
     protected $primaryKey = 'id_jadwal';
 
     protected $fillable = [
-        'semester', 'tahun_ajaran', 'kelompok', 'id_dosen', 'id_mtk', 'id_lab', 'hari', 'jam_ajar',
+        'semester', 'tahunajaran', 'kelompok', 'id_user', 'id_mtk', 'id_lab', 'hari', 'jam_ajar',
     ];
 }

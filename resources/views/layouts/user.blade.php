@@ -495,6 +495,14 @@
             }
         });
 
+        $("#fieldlab").change(function(){
+            var idlab    = $(this).val();
+
+            console.log(idlab);
+            
+           
+        });
+
         $("#namaDosen").change(function(){
             var idmtk       = $("#namaMatkul").val();
             var iddosen     = $(this).val();
@@ -996,6 +1004,10 @@
         });
 
         e.preventDefault();
+    });
+
+    $("#fieldlab").change(function(){
+        alert("The text has been changed.");
     });
 
     $(document).on('submit', '#formkp', function(e){

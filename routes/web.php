@@ -88,6 +88,8 @@ Route::group(['prefix'=>'/admin'], function() {
     Route::get('/jadwal/ubah/{id_jadwal}', 'JadwalController@ubah')->name('ubahjadwal');
     Route::post('/jadwal/prosesubah', 'JadwalController@prosesubah')->name('prosesubahjadwal');
     Route::get('/jadwal/hapus/{id_jadwal}', 'JadwalController@hapus')->name('hapusjadwal');
+    Route::get('/jadwal/export_excel', 'JadwalController@export_excel')->name('export');
+    Route::post('/jadwal/import_excel', 'JadwalController@import_excel')->name('import');
     
     
     Route::post('/jadwal/sks', 'JadwalController@ceksks');

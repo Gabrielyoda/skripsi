@@ -41,12 +41,14 @@ class LabController extends Controller
     function prosestambah(Request $request)
     {
         $nama       = $request->get('namaLab');
+        $spesifikasi = $request->get('spesifikasi');
         $kapasitas  = $request->get('kapasitasLab');
 
         $lab    = new lab();
         
         $lab    -> nama_lab         = $nama;
         $lab    -> kapasitas_lab    = $kapasitas;
+        $lab    -> spesifikasi      = $spesifikasi;
 
         if($lab->save())
         {
@@ -75,12 +77,14 @@ class LabController extends Controller
     {
         $id         = $request->get('id');
         $nama       = $request->get('namaLab');
+        $spesifikasi = $request->get('spesifikasi');
         $kapasitas  = $request->get('kapasitasLab');
 
         $lab    = Lab::find($id);
         
         $lab    -> nama_lab         = $nama;
         $lab    -> kapasitas_lab    = $kapasitas;
+        $lab    -> spesifikasi      = $spesifikasi;
 
         if($lab->save())
         {

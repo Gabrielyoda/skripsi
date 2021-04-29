@@ -394,7 +394,8 @@ class ApiJadwalController extends Controller
                     $lab3[$k] = $lab[$i] -> nama_lab;
                     $labApi[$k] = array(
                     "id_lab"=>  $lab[$i] -> id_lab,
-                    "nama_lab"=> $lab[$i] -> nama_lab
+                    "nama_lab"=> $lab[$i] -> nama_lab,
+                    "spesifikasi" => $lab[$i] -> spesifikasi
                 );
                     $k++;
                 }

@@ -18,6 +18,7 @@
 								<tr>
 									<th>No.</th>
 									<th>Nama Lab</th>
+                                    <th>Spesifikasi</th>
 									<th>Kapasitas</th>
                                     <th class="text-center">Pilihan</th>
 								</tr>
@@ -30,6 +31,7 @@
                                 <tr>
                                     <td>{{ $nomor }}</td>
                                     <td>{{ $labs -> nama_lab }}</td>
+                                    <td>{{ $labs -> spesifikasi }}</td>
                                     <td>{{ $labs -> kapasitas_lab }} Mahasiswa</td>
                                     <td class="text-center">
                                         <div class="btn-group">

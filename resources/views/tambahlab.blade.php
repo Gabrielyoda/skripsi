@@ -14,6 +14,10 @@
                             <input type="text" name="namaLab" class="form-control" placeholder='Lab. Kom 01' required>
                         </div>
                         <div class="form-group">
+                            <label class="text-muted">Spesifikasi :</label>
+                            <input type="text" name="spesifikasi" class="form-control" placeholder='PHP,Java,Mobile' required>
+                        </div>
+                        <div class="form-group">
                             <label class="text-muted">Kapasitas Maksimum :</label>
                             <input type="number" name="kapasitasLab" class="form-control" required>
                         </div>

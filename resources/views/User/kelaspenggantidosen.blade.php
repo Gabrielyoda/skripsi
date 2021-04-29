@@ -55,6 +55,9 @@
                         <div class="text-center mb-2">
                             <button type="button" id="tampilModalJamAjar" class="btn btn-primary" data-toggle="modal" data-target="#modalJamAjar">-- Pilih Jam Ajar & Lab --</button>
                         </div>
+
+                        
+
                         <div class="form-group">
                             <label class="text-muted">Jam Ajar (Mulai - Selesai):</label>
                             <div class="input-group mb-2">
@@ -75,6 +78,12 @@
                                 <input type="text" name="ruangLab" id="fieldlab" class="form-control text-dark" readonly required>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="text-muted" for="fieldtanggal"><b>Ket : Lab 2 dan Lab 10 untuk Desain Grafis</b></label>
+                            
+                        </div>
+                        
                         <br><hr><br>
                         <div class="text-center">
                             <div class="btn-group">

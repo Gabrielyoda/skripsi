@@ -48,6 +48,8 @@
                                 </select>
                             </div>
                         </div>
+
+                        
                         
                         <div class="form-group">
                             <label class="text-muted" for="fieldtanggal">Tanggal Kuliah Pengganti :</label>
@@ -61,6 +63,15 @@
                         <div class="text-center mb-2">
                             <button type="button" id="tampilModalJamAjar" class="btn btn-primary" data-toggle="modal" data-target="#modalJamAjar">-- Pilih Jam Ajar & Lab --</button>
                         </div>
+
+                        <div class="form-group">
+                            <label class="text-muted" for="fieldtanggal">Lab 1 dan Lab 11 untuk Aplikasi Berat Android Studio dan Matlab</label><br>
+                            <label class="text-muted" for="fieldtanggal">Lab 2 dan Lab 10 untuk Jaringan</label><br>
+                            <label class="text-muted" for="fieldtanggal">Lab 4 ,Lab 5 dan Lab 8 untuk Desain Grafis</label>
+                            <label class="text-muted" for="fieldtanggal">Lab 6 dan Lab 9 untuk Aplikasi Ekonomi</label>
+                            <label class="text-muted" for="fieldtanggal">Lab 7 , Lab 12 dan Lab 14 untuk Aplikasi Ringan</label>
+                        </div>
+                        
                         <div class="form-group">
                             <label class="text-muted">Jam Ajar (Mulai - Selesai):</label>
                             <div class="input-group mb-2">
